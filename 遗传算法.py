@@ -3,9 +3,9 @@ import numpy as np
 import random
 
 # 题目： 走五个地方的最短路径
-# 答案应该为 [0,1,2,3,4]或[4,3,2,1,0]
+# 答案应该为 [0,1,2,3,8]或[8,3,2,1,0]
 
-places = ([1, 1], [2, 2], [3, 3], [4, 4], [5, 5],
+places = ([1, 1], [2, 2], [3, 3], [4, 4], [5, 100],
           [124, 768], [56, 78], [77, 88], [4, 7], [65, 47], [45, 23],
           [15, 678], [35, 24], [25, 67], [231, 952], [48, 20])  # 16个地点
 
@@ -252,9 +252,9 @@ def crossover():
         Offspring_A = temp_left_DNA_odd + temp_right_DNA_even
         Offspring_B = temp_left_DNA_even + temp_right_DNA_odd
 
-        # 突变
-        Offspring_A = mutation(Offspring_A, 2)
-        Offspring_B = mutation(Offspring_B, 2)
+        # 突变(控制概率突变，随机改变其中一位二级制数字）
+        Offspring_A = mutation(Offspring_A, 10)
+        Offspring_B = mutation(Offspring_B, 10)
 
         # 验证是否有重复的元素（经过地点），如果有的话随机生成一条新的染色体
         if validator_of_repeated_element(Offspring_A):
@@ -300,12 +300,12 @@ if __name__ == '__main__':
     # 编码（直接二进制对应，（0000-1111)）
     # 解码（直接二进制对应）
     # 选择
-    # 杂交（选出适应度排序前两个，杂交，替换最低的 （五个四位的二进制组成dna，前两位和后两位交换））
-    # 突变（选择适应度较低的一些随机改变随机位数的编码）
+    # 杂交（）
+    # 突变（）
     # 适应度（路径长度，越短 适应度越高）
 
-    initialize_species(300)  # 初始设定个体个数
-    rounds = 500  # 进行轮数
+    initialize_species(100)  # 初始设定个体个数
+    rounds = 20000  # 进行轮数
     count = 0
     generation_process()  # 每一代初始化后的一些处理
     while count < rounds:
@@ -317,6 +317,7 @@ if __name__ == '__main__':
         #     break          
         count = count + 1
         temp_best_fitness = calculate_fitness(decode(species[0]))
+        print("best case: ",decode(species[0]))
         print("fitness of best case is :", temp_best_fitness)
         print("current generation is : ", count)
 
