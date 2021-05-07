@@ -22,7 +22,6 @@ new_generation_species = []
 
 # 计算两点距离
 def calculateDistance(place_A, place_B):
-    # print("在这里", place_A, place_B)
     return ((places[place_A][0] - places[place_B][0]) ** 2 +
             (places[place_A][1] - places[place_B][1]) ** 2) ** 0.5
 
@@ -305,7 +304,7 @@ if __name__ == '__main__':
     # 适应度（路径长度，越短 适应度越高）
 
     initialize_species(100)  # 初始设定个体个数
-    rounds = 20000  # 进行轮数
+    rounds = 2000  # 进行轮数
     count = 0
     generation_process()  # 每一代初始化后的一些处理
     while count < rounds:
@@ -320,7 +319,7 @@ if __name__ == '__main__':
         print("best case: ",decode(species[0]))
         print("fitness of best case is :", temp_best_fitness)
         print("current generation is : ", count)
-
+    #
     print("the final result: ", calculate_fitness(decode(species[0])))
     print("the final result: ", decode(species[0]))
 
