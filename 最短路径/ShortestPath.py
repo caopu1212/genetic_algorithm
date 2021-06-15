@@ -304,7 +304,7 @@ if __name__ == '__main__':
     # 适应度（路径长度，越短 适应度越高）
 
     initialize_species(100)  # 初始设定个体个数
-    rounds = 2000  # 进行轮数
+    rounds = 20000  # 进行轮数
     count = 0
     generation_process()  # 每一代初始化后的一些处理
     while count < rounds:
