@@ -1,5 +1,3 @@
-from LogicalService import *
-import numpy as np
 
 """
 正如组合问题与动态规划的联系之应用提到的从起点(0,0)到终点(X,Y)一共有多少种走法。与之相似的另一个问题是如何找到从(0,0)到(X,Y)的路径？
@@ -9,39 +7,29 @@ import numpy as np
 
 """
 TODO LIST
-# 1.想出如何映射,编码                           
-路径上下左右对应00,01,10,11
-问题: 随机生成的路线，长度不固定
-解决方案：
-1. 不处理， 在交叉时随机选取的gene snippet取值范围只取前面一部分的
-2. 
+映射,编码 规则：                           
+√1.路径上下左右对应00,01,10,11
 
+杂交方案：
+1.  在交叉时 随机获得父的一个点，然后找到母最后一次经过这个点的地方，  前半用父的，后半用母的， 拼成子代
+2.  在交叉时 取父 中间位置的一个点，剩下同1 
+3.  找到父的第一次出现重复的点的第一个的位置如：list[1,4,2,3,4,1,0], 则取list[1]，剩下同1
+√4.  父中随机找一个点，取这个点第一次出现的位置（同3），剩下同1 
 
-# 2.随机连接起点到终点 路径的 函数                 ********（done）**********
-# 3.写编码解码的函数                                ********（done）**********
-# 4.计算fitness的函数（步数越短fitness越高，杂交完之后验证可否走通，走不通的fitness为0）   ********（done）**********
-# 5.优化路线生成（防止重复左右横跳）
+突变方案：
+√1.  选取杂交时的开始的点，从那开始生成一条随机的通往终点的路径，最后拼起来
+2   
+
+# @@.随机连接起点到终点 路径的 函数                 ********（done）**********
+# @@.写编码解码的函数                                ********（done）**********
+# @@.计算fitness的函数（步数越短fitness越高，杂交完之后验证可否走通，走不通的fitness为0）   ********（done）**********
+# @@.优化路线生成（防止重复左右横跳） ********（half done）**********
 """
-blind_alleys = []
-
-fitness_list = []
-
-def initialize_species(cycle):
-    get_blind_alley()  # 获得所有死路
-    count = 0
-    while count < cycle:
-        species.append(get_new_individual([0, 0]))
-        count = count + 1
-
-    for i in species:
-        fitness_list.append(calculate_fitness(i))
 
 
 
-if __name__ == '__main__':
-    chromosome = [['01'], ['10'], ['00'], ['01'], ['00'], ['11'], ['11']]
-    temp = decode(chromosome)
-    fitness = calculate_fitness(temp)
 
-    initialize_species(10)
-    print(fitness_list)
+
+
+
+
