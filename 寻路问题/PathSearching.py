@@ -271,7 +271,6 @@ def mutation(rate, target_chromosome):
     if mutation_rate <= rate:
         new_way = get_new_individual(target_chromosome[random_index])
         target_chromosome = target_chromosome[0:random_index+1] + new_way
-
     return target_chromosome
 
 
@@ -301,11 +300,11 @@ if __name__ == '__main__':
     # temp = decode(chromosome)
     # fitness = calculate_fitness(temp)
 
-    initialize_species(200)  # 入参：每一代的物种个数
-    rounds = 100000
+    initialize_species(50)  # 入参：每一代的物种个数
+    rounds = 5000
     count = 0
     while count < rounds:
-        selection(int(len(species) / 2))  # 入参：保留到下一代的个体数量
+        selection(int(len(species) / 1.2))  # 入参：保留到下一代的个体数量
         crossover()
 
         initialize()

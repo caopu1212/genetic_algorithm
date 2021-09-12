@@ -11,7 +11,7 @@ def creare_place():
         list.append(sub_list)
         count = count + 1
     return list
-
+max()
 
 if __name__ == '__main__':
     print(creare_place())
