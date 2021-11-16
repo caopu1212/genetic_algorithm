@@ -1,30 +1,45 @@
-import random
 import numpy as np
-import GoodGameHaveFun
+import math
+import random
+import matplotlib.pyplot as plt
 
-list1 = [1, 23, 4, 5, 6, 4, 5, 6, 2, 4, 6, 8]
-list2 = [1, 23, 4, 5, 6, 4, 5, 6, 2, 4, 6, 8]
-
-# testList = map(lambda x, y: x + y, list1, list2)
+# x = np.arange(-10, 10, 0.1)
+# y = []
+# for t in x:
+#     y_1 = 1 / (1 + math.exp(-t))
+#     y.append(y_1)
 #
-# testList = map(lambda x: x * 2, testList)
+# x = [1,2,3,4,5]
+# y = [123,5225,3,777,8]
+#
+# plt.plot(x, y, label="sigmoid")
+# plt.xlabel("x")
+# plt.ylabel("y")
+# plt.ylim(0, 1)
+# plt.legend()
+# plt.show()
+def temp(T):
+    return T0/math.log10(10+T)
 
-testList = filter(lambda x: x * 2,
-                  map(lambda x: x * 2,
-                      map(lambda x, y: x + y, list1,
-                          map(lambda x: x ** 2, list1))))
+T0 = 100000
+y = []
+T = 100000
+for i in range(0,50):
+    T = temp(T)
+    y.append(T)
 
-print(list(testList))
-
-GoodGameHaveFun.test()
-
-
-def test(a, b):
-    return a + b
+print(y)
 
 
-def test2(function, b):
-    return function(b, b)
+
+print(math.exp(-(5/1)))
 
 
-print(test2(test, 1))
+testList1 = []
+for i in range(0,100):
+    testList1.append(random.randint(1,5))
+
+print(testList1)
+
+for i in range(1):
+    print("a")
