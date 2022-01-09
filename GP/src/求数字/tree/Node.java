@@ -63,7 +63,7 @@ public abstract class Node implements OperatorNode {
   }*/
 
     public String printContent() {
-        return this.getRight().printContent() + ' ' + this.getLeft().printContent() + ' ' + this.rep;
+        return this.getLeft().printContent() + ' ' + this.getRight().printContent() + ' ' + this.rep;
     }
 
     // 操作符结点数

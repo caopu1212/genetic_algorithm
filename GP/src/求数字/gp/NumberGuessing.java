@@ -242,10 +242,12 @@ public class NumberGuessing {
     }
 
     public static void main(String[] args) {
+        long totalStartTime = System.currentTimeMillis();
+
         NumberGuessing gp = new NumberGuessing();
 
-        ArrayList timeList = new ArrayList();
-        ArrayList generationList = new ArrayList();
+        ArrayList<Long> timeList = new ArrayList();
+        ArrayList<Integer> generationList = new ArrayList();
         int example = 567;
 
         for (int i = 0; i < 10; i++) {
@@ -261,8 +263,32 @@ public class NumberGuessing {
             gp.totalGenerations = 1;
         }
         System.out.println("Time: " + timeList);
-        System.out.println("Number of generations : "+ generationList );
+        System.out.println("Number of generations : " + generationList);
+
+        long totalStopTime = System.currentTimeMillis();
+
+        System.out.println("total time= " + (totalStopTime - totalStartTime));
+
+
+
+        Long total = Long.valueOf(0);
+        for (Long time :timeList) {
+            total +=time;
+        }
+        System.out.println("时间均值："+ total/ timeList.size());
+
+        Long total1 = Long.valueOf(0);
+        for (Integer generation :generationList) {
+            total1 +=generation;
+        }
+        System.out.println("迭代数均值："+ total1/ generationList.size());
+
 
     }
 
 }
+
+
+
+
+

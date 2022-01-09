@@ -43,3 +43,8 @@ print(testList1)
 
 for i in range(1):
     print("a")
+
+def test():
+    return 1,2,3
+a,b,c = test()
+print(a,b,c)

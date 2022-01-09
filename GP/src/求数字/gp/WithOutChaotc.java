@@ -138,8 +138,9 @@ class WithOutChaotic {
                 double x = random.nextDouble();
 //                x = x * μ * (1 - x);
                 subList.add(x);
-                mappingList.add(subList);
+
             }
+            mappingList.add(subList);
         }
         ArrayList resultList = new ArrayList();
 
@@ -426,9 +427,9 @@ class WithOutChaotic {
         ArrayList timeList = new ArrayList();
         ArrayList generationList = new ArrayList();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             long startTime = System.currentTimeMillis();
-            withOutChaotic.geneticAlgorithm(200, 321, null);
+            withOutChaotic.geneticAlgorithm(200, 5670, null);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));

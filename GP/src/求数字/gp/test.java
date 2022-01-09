@@ -1,10 +1,11 @@
 package src.求数字.gp;
 
-import com.sun.corba.se.impl.resolver.FileResolverImpl;
 import src.求数字.tree.*;
 
-import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
 
 /**
  * logistic mapping
@@ -22,13 +23,19 @@ import java.util.*;
 
 /**
  * N: amount of chaotic mapping
- * <p>
+ *
  * chaotic_mapping = []
  * chaotic_mapping_list = []
  * for j in range (M)
  * for i in range(N):
- * Xnew =Xμ（1-X）
- * chaotic_mapping.add(Xnew)
+ *     Xnew =Xμ（1-X）
+ *     chaotic_mapping.add(Xnew)
+ *
+ *
+ *
+ *
+ *
+ *
  */
 
 //N: size of chaotic mapping
@@ -49,7 +56,7 @@ import java.util.*;
 //for i in chaotic_mapping_list:
 
 
-public class Chaotic {
+public class test {
     public static int count = 0;
     private Random random = new Random();
     private int totalGenerations = 1;
@@ -156,16 +163,13 @@ public class Chaotic {
      */
     public ArrayList getChaoticFactor() {
 
-        double μ = 4;
 
+        Random random = new Random();
         ArrayList mappingList = new ArrayList();
-        ArrayList mappingList_ = new ArrayList();
-        for (int j = 0; j < 50; j++) {
+        for (int j = 0; j < 5000; j++) {
             ArrayList subList = new ArrayList();
-            Random random = new Random();
-            double x = random.nextDouble();
-            for (int i = 0; i < 50; i++) {
-                x = x * μ * (1 - x);
+            for (int i = 0; i < 3; i++) {
+                double x = random.nextDouble();
                 subList.add(x);
             }
             mappingList.add(subList);
@@ -241,7 +245,7 @@ public class Chaotic {
                 count = 0;
             }
 //            population[i].setFitness(Math.abs(result - solution));
-            population[i].setFitness((int) Math.pow(result - solution, 2));
+             population[i].setFitness((int) Math.pow(result - solution, 2));
         }
 
         return sequenceFound;
@@ -251,8 +255,8 @@ public class Chaotic {
     /**
      * 生成全局混沌factor
      */
-    public void evaluateChaoticFactors(int solution) {
-        Chaotic chaotic = new Chaotic();
+    public void evaluateChaoticFactors() {
+        test chaotic = new test();
         //生成混沌映射
         ArrayList chaoticList = chaotic.getChaoticFactor();
         HashMap<ArrayList, ArrayList> chaoticMap = new HashMap<>();
@@ -262,8 +266,7 @@ public class Chaotic {
             ArrayList probabilityList = (ArrayList) probabilityList_;
             for (int i = 0; i < 100; i++) {
                 OperatorNode chaoticPopulation = chaotic.generateTree(10, 3, probabilityList);
-                chaotic.evaluateFitnessChaotic(chaoticPopulation, solution);
-//                chaotic.evaluateFitnessChaotic(chaoticPopulation, 10);
+                chaotic.evaluateFitnessChaotic(chaoticPopulation, 10);
 
 //                System.out.println(chaoticPopulation.printContent());
 //                System.out.println("result = " + chaoticPopulation.operate());
@@ -286,8 +289,7 @@ public class Chaotic {
             Double average = chaotic.calculateAverageFitness(chaoticPopulationList);
 //            System.out.println("average = " + average);
 
-
-            int size = 10;
+            int size = 20;
             if (bestFitessList.size() != size) {
                 bestFitessList.add(average);
                 betterChaoticMapping.add((ArrayList<Double>) key);
@@ -302,17 +304,18 @@ public class Chaotic {
                 }
             }
 
-//
+
+
 //            //fitness越接近0越符合
 //            if (average <= bestFitness) {
 //                //若已满n个，则删掉最小那个（i）
-//                int size = 20;
+//                int size = 10;
 //                if (betterChaoticMapping.size() == size) {
+//                    System.out.println("average = " + average);
 //                    bestFitness = average;
 //                    betterChaoticMapping.add(0, (ArrayList<Double>) key);
 //                    betterChaoticMapping.remove(size);
 //                } else {
-//                    bestFitessList.add(average);
 //                    System.out.println("average = " + average);
 //                    bestFitness = average;
 //                    betterChaoticMapping.add((ArrayList<Double>) key);
@@ -472,21 +475,20 @@ public class Chaotic {
 
         long totalStartTime = System.currentTimeMillis();
 
-        int solution = 567;
-
-        Chaotic chaotic = new Chaotic();
-
-//        for (int i = 0; i < 10; i++) {
-            chaotic.evaluateChaoticFactors(solution);
-//        }
-
-
-        ArrayList<Long> timeList = new ArrayList();
-        ArrayList<Integer> generationList = new ArrayList();
+        test chaotic = new test();
 
         for (int i = 0; i < 10; i++) {
+            chaotic.evaluateChaoticFactors();
+        }
+
+
+
+        ArrayList timeList = new ArrayList();
+        ArrayList generationList = new ArrayList();
+
+        for (int i = 0; i < 1; i++) {
             long startTime = System.currentTimeMillis();
-            chaotic.geneticAlgorithm(200, solution, null);
+            chaotic.geneticAlgorithm(200, 5670, null);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));
@@ -497,28 +499,14 @@ public class Chaotic {
             chaotic.totalGenerations = 1;
         }
         System.out.println("Time: " + timeList);
-        System.out.println("Number of generations : " + generationList);
+        System.out.println("Number of generations : "+ generationList );
 
         long totalStopTime = System.currentTimeMillis();
 
         System.out.println("total time= " + (totalStopTime - totalStartTime));
-
-
-
-        Long total = Long.valueOf(0);
-        for (Long time :timeList) {
-            total +=time;
-        }
-        System.out.println("时间均值："+ total/ timeList.size());
-
-        Long total1 = Long.valueOf(0);
-        for (Integer generation :generationList) {
-            total1 +=generation;
-        }
-        System.out.println("迭代数均值："+ total1/ generationList.size());
-
-
     }
+
+
 
 }
 

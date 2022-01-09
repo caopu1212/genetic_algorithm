@@ -1,335 +1,241 @@
-# -*- coding:utf-8 -*-
+from matplotlib import pyplot as plt
 import numpy as np
-import random
+import pandas as pd
+import time
 
 
-places = ([1, 1], [2, 2], [3, 3], [4, 4], [5, 100],
-          [124, 768], [56, 78], [77, 88], [4, 7], [65, 47], [45, 23],
-          [15, 678], [35, 24], [25, 67], [231, 952], [48, 20])  # 16个地点
- 
-species = []
-
-fitness_highest = 0
-fitness_lowest = 0
-rounds = 0
-
-total_fitness_list = []
-
-new_generation_species = []
+# # 生成城市坐标
+# city_num = 50  # 城市数量
+# name = ["city's name"] * city_num  # 这个并没什么用，但是不要省，省了的话还要修改代码
+# x = [np.random.randint(0, 100) for i in range(city_num)]
+# y = [np.random.randint(0, 100) for i in range(city_num)]
+# with open("cities.csv", "w") as f:
+#     for i in range(city_num):
+#         f.write(name[i] + "," + str(x[i]) + "," + str(y[i]) + "\n")
+#     f.write(name[0] + "," + str(x[0]) + "," + str(y[0]) + "\n")  # 最后一个节点即为起点
 
 
-# 计算两点距离
-def calculateDistance(place_A, place_B):
-    return ((places[place_A][0] - places[place_B][0]) ** 2 +
-            (places[place_A][1] - places[place_B][1]) ** 2) ** 0.5
+def create_init_list(filename):
+    data = pd.read_csv(filename, names=['index', 'lon', 'lat'])  # lon->经度 lat->纬度
+    data_list = []
+    for i in range(len(data)):
+        data_list.append([float(data.iloc[i]['lon']), float(data.iloc[i]['lat'])])
+    return data_list
 
 
-# 计算一条染色体走的路径
-# 入参like: [3,4,6,9,7]
-def pastFivePlace(aim_list):
-    total_distance = 0
-    for index in range(0, len(aim_list)):
-        if index == 4:
-            break
-        # print(index)
-        total_distance = calculateDistance(
-            aim_list[index], aim_list[index + 1]) + total_distance
-        # print("距离为：", total_distance)
-
-    return total_distance
-
-
-# 随机生成一条新的编码后的染色体
-def get_new_individual():
-    DNA_befor_encode = get_five_place()
-    DNA_after_encode = ""
-    # print("随机五个数为： ", DNA_befor_encode)
-    index = 0
-    for index in range(0, 5):
-        # print("index: ", index)
-        # print("编码之前：", DNA_befor_encode[index])
-
-        DNA_after_encode = DNA_after_encode + decimal_to_binary(
-            DNA_befor_encode[index])
-        # print(DNA_after_encode)
-    return DNA_after_encode
-
-
-# 初始化物种
-def initialize_species(cycle):
-    count = 0
-    while count < cycle:
-        species.append(get_new_individual())
-        count = count + 1
-
-
-# 获得5个随机随机数 0—15之间
-def get_five_place():
-    DNA_befor_encode = random.sample(range(0, 15), 5)
-    return DNA_befor_encode
-
-
-# 二转十 入str 出int
-def binary_to_decimal(binary_num):
-    return int(str(binary_num), 2)
-
-
-# 十转二 入参int， return String
-def decimal_to_binary(decimal_num):
-    return bin(decimal_num).replace("0b", "").zfill(4)  # 高位补零到4位
-
-
-# dna解码为十进制list
-def decode(DNA_after_encode):
-    temp_list = []
-    count = 0
-    for index1 in range(0, 5):
-        temp_str = ""
-        for index2 in range(0, 4):
-            temp_str = temp_str + DNA_after_encode[count]
-            count = count + 1
-        # print("binary is: ", temp_str)
-        temp_list.append(binary_to_decimal(temp_str))
-    # print("解码结果为：", temp_list)
-    return temp_list
-
-
-# 计算适合度 反比例函数 y= kx**-1， x越小y越大
-def calculate_fitness(places_list):
-    fitness = (pastFivePlace(places_list)) ** -1 * (10 ** 3)
-    # print("适应度: ", fitness)
-    return fitness
-
-
-# 每一代初始化后的一些处理:获得最高最低适合度，将最高最低放到相应位置
-def generation_process():
-    for individual_DNA in species:
-        index_of_individual = species.index(individual_DNA)
-        # 如果有路径重复，那么生成随机染色体代替
-        if validator_of_repeated_element(individual_DNA):
-            species.pop(index_of_individual)
-            species.insert(index_of_individual,
-                           (get_new_individual()))
-
-        DNA_after_decode = decode(individual_DNA)  # 解码
-        fitness_target = calculate_fitness(DNA_after_decode)
-        # print(species[0])
-        fitness_highest = calculate_fitness(
-            decode(species[0]))  # list第一个为适合度最高的个体
-
-        fitness_lowest = calculate_fitness(
-            decode(species[len(species) - 1]))  # 最后一个为最低
-
-        # 计算每一个的适合度，如果大于最高的话，将这个放到species[0]
-        if fitness_target > fitness_highest:
-            pop_individual = species.pop(index_of_individual)
-            species.insert(0, pop_individual)
-
-        # 如果比最低小的话放到最后
-        if fitness_target < fitness_lowest:
-            pop_individual = species.pop(index_of_individual)
-            species.insert(len(species), pop_individual)
-
-        total_fitness_list.append(fitness_target)
-
-
-# 轮盘赌选择 每次选两个，然后对比，适应度高的进入下一代
-# 轮盘赌：每个个体进入下一代的概率等于它的适应度值与整个种群中个体适应度值和的比例。
-def selection():
-    _total_fitness_list = np.array(total_fitness_list)
-    total_fitness = np.sum(total_fitness_list)
-    i = 0
-    individual_probability = []  # 个体各自的概率（个体适合度/总适合度）
-    cumulative_probability = []  # 累计概率
-    cumulative_count = 0
-    for i in range(len(_total_fitness_list)):
-        individual_probability.append(_total_fitness_list[i] / total_fitness)
-        cumulative_count = individual_probability[i] + cumulative_count
-        cumulative_probability.append(cumulative_count)
-
-    while 1:
-        # 随机选两个对比，fitness大的加到new_generation_species里
-        competitor = []
-        random_rate = np.random.random(2)
-        # print(random_rate)
-        count = 0
-        while count < len(cumulative_probability):
-            if not competitor:
-                if random_rate[0] < cumulative_probability[count]:
-                    competitor.append(species[count])
-                    count = 0
-                count = count + 1
+def distance_matrix(coordinate_list, size):  # 生成距离矩阵，邻接矩阵
+    d = np.zeros((size + 2, size + 2))
+    for i in range(size + 1):
+        x1 = coordinate_list[i][0]
+        y1 = coordinate_list[i][1]
+        for j in range(size + 1):
+            if (i == j) or (d[i][j] != 0):
+                continue
+            x2 = coordinate_list[j][0]
+            y2 = coordinate_list[j][1]
+            distance = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+            if (i == 0):  # 起点与终点是同一城市
+                d[i][j] = d[j][i] = d[size + 1][j] = d[j][size + 1] = distance
             else:
-                if random_rate[1] < cumulative_probability[count]:
-                    competitor.append(species[count])
-                    break
-                count = count + 1
+                d[i][j] = d[j][i] = distance
+    return d
 
-        # 随机选出两个，然后对比，fitness大的进入下一代
-        if competitor[0] >= competitor[1]:
-            new_generation_species.append(competitor[0])
+
+def path_length(d_matrix, path_list, size):  # 计算路径长度
+    length = 0
+    for i in range(size + 1):
+        length += d_matrix[path_list[i]][path_list[i + 1]]
+    return length
+
+
+def shuffle(my_list):  # 起点不能打乱
+    temp_list = my_list[1:]
+    np.random.shuffle(temp_list)
+    shuffle_list = my_list[:1] + temp_list
+    return shuffle_list
+
+
+
+
+def product_len_probability(my_list, d_matrix, size, p_num):  # population,   d,       size,p_num
+    len_list = []  # 种群中每个个体（路径）的路径长度
+    pro_list = []
+    path_len_pro = []
+    for path in my_list:
+        len_list.append(path_length(d_matrix, path, size))
+    max_len = max(len_list) + 1e-10
+    gen_best_length = min(len_list)  # 种群中最优路径的长度
+    gen_best_length_index = len_list.index(gen_best_length)  # 最优个体在种群中的索引
+    # 使用最长路径减去每个路径的长度，得到每条路径与最长路径的差值，该值越大说明路径越小
+    mask_list = np.ones(p_num) * max_len - np.array(len_list)
+    sum_len = np.sum(mask_list)  # mask_list列表元素的和
+    for i in range(p_num):
+        if (i == 0):
+            pro_list.append(mask_list[i] / sum_len)
+        elif (i == p_num - 1):
+            pro_list.append(1)
         else:
-            new_generation_species.append(competitor[1])
-        if len(new_generation_species) >= len(species) * 0.8:  # 直到新世代达到原个体数的0.8倍
+            pro_list.append(pro_list[i - 1] + mask_list[i] / sum_len)
+    for i in range(p_num):
+        # 路径列表 路径长度 概率
+        path_len_pro.append([my_list[i], len_list[i], pro_list[i]])
+    # 返回 最优路径 最优路径的长度 每条路径的概率
+    return my_list[gen_best_length_index], gen_best_length, path_len_pro
+
+
+def choose_cross(population, p_num):  # 随机产生交配者的索引，越优的染色体被选择几率越大
+    jump = np.random.random()  # 随机生成0-1之间的小数
+    if jump < population[0][2]:
+        return 0
+    low = 1
+    high = p_num
+    mid = int((low + high) / 2)
+    # 二分搜索
+    # 如果jump在population[mid][2]和population[mid-1][2]之间，那么返回mid
+    while (low < high):
+        if jump > population[mid][2]:
+            low = mid
+            mid = (low + high) // 2
+        elif jump < population[mid - 1][2]:  # mid-1
+            high = mid
+            mid = (low + high) // 2
+        else:
+            return mid
+
+
+def product_offspring1(size, parent_1, parent_2, pm):  # 产生后代
+    son = parent_1.copy()
+    product_set = np.random.randint(1, size + 2)
+    parent_cross_set = set(parent_2[1:product_set])  # 交叉序列集合
+    cross_complete = 1
+    for j in range(1, size + 2):
+        if son[j] in parent_cross_set:
+            son[j] = parent_2[cross_complete]
+            cross_complete += 1
+            if cross_complete > product_set:
+                break
+
+def product_offspring(size, parent_1, parent_2, pm):  # 产生后代
+
+    index1 = np.random.randint(len(parent_1)/3, len(parent_1) - 1)
+    # index2 = np.random.randint(index1, len(parent_1) - 1)
+    result_list = parent_1[0:index1]
+    for i in parent_2:
+        if i in result_list:
+            continue
+        else:
+            result_list.append(i)
+    if np.random.random() < pm:  # 变异
+        result_list = veriation(result_list, size, pm)
+    return result_list
+
+
+
+
+
+
+
+
+def veriation(my_list, size, pm):  # 变异，随机调换两城市位置
+    ver_1 = np.random.randint(1, len(my_list) - 1)
+    ver_2 = np.random.randint(1, len(my_list)  - 1)
+    while ver_2 == ver_1:  # 直到ver_2与ver_1不同
+        ver_2 = np.random.randint(1, len(my_list)  -1)
+    my_list[ver_1], my_list[ver_2] = my_list[ver_2], my_list[ver_1]
+    return my_list
+
+
+def main(filepath, p_num, gen, pm):
+
+    coordinate_list = create_init_list(filepath)
+    size = len(coordinate_list) - 2  # 除去了起点
+    d = distance_matrix( coordinate_list, size)  # 各城市之间的邻接矩阵
+    path_list = list(range(size + 2))  # 初始路径
+    # 随机打乱初始路径以建立初始种群路径
+    population = [shuffle(path_list) for i in range(p_num)]
+
+
+
+    # 初始种群population以及它的最优路径和最短长度
+    gen_best, gen_best_length, population = product_len_probability(population, d, size, p_num)
+    # 现在的population中每一元素有三项，第一项是路径，第二项是长度，第三项是使用时转盘的概率
+    son_list = [0] * p_num  # 后代列表
+    best_path = gen_best  # 最好路径初始化
+    best_path_length = gen_best_length  # 最好路径长度初始化
+    every_gen_best = [gen_best_length]  # 每一代的最优值
+
+    best_List = []
+    start = time.time()
+    for i in range(gen):  # 迭代gen代
+        son_num = 0
+        while son_num < p_num:  # 循环产生后代，一组父母亲产生两个后代
+            father_index = choose_cross(population, p_num)  # 获得父母索引
+            mother_index = choose_cross(population, p_num)
+            father = population[father_index][0]  # 获得父母的染色体
+            mother = population[mother_index][0]
+            son_list[son_num] = product_offspring(size, father, mother, pm)  # 产生后代加入到后代列表中
+            son_num += 1
+            if son_num == p_num:
+                break
+            son_list[son_num] = product_offspring(size, mother, father, pm)  # 产生后代加入到后代列表中
+            son_num += 1
+        # 在新一代个体中找到最优路径和最优值
+        gen_best, gen_best_length, population = product_len_probability(son_list, d, size, p_num)
+
+        # print(best_path_length)
+        # print(i)
+
+        if (gen_best_length < best_path_length):  # 这一代的最优值比有史以来的最优值更优
+            best_path = gen_best
+            best_path_length = gen_best_length
+
+
+        every_gen_best.append(best_path_length)
+
+
+        # 控制跳出fitness
+        if gen_best_length <= 215:
             break
 
-    # print(individual_probability)
-    # print(cumulative_probability)
+        # #控制跳出时间
+        # end = time.time()
+        # if end-start >= 30:
+        #     break
 
 
-# 验证是否有重复元素
+    end = time.time()
+    print(f"time：{(end-start)}")
+    # print("best path:", best_path, sep=" ")  # 史上最优路径
+    # print("best fitness:", best_path_length, sep=" ")  # 史上最优路径长度
 
+    # 打印各代最优值和最优路径
+    x = [coordinate_list[point][0] for point in best_path]  # 最优路径各节点经度
+    y = [coordinate_list[point][1] for point in best_path]  # 最优路径各节点纬度
 
-def validator_of_repeated_element(input):
-    Offspring_A_valid = decode(input)
-    set_lst = set(Offspring_A_valid)
-    if len(set_lst) != len(Offspring_A_valid):  # 有重复的元素
-        Offspring_A_valid = get_new_individual()
-        return True
-    else:
-        return False
-
-
-# 替换字符串字符
-def replace_string(string, index, replace):
-    string2 = ''
-    for i in range(len(string)):
-        if i == index:
-            string2 += replace
-    else:
-        string2 += string[i]
-    return string2
-
-
-# 变异(在交叉的时候，有rate ％的概率突变，随机位置的基因变为相反的 )
-def mutation(target_DNA, rate):
-    mutation_rate = random.randint(0,100)
-    mutation_position = random.randint(0,15)
-    if mutation_rate <= rate:
-        count = 0
-        while count < len(target_DNA):
-            if count == mutation_position:
-                if target_DNA[count] == "1":
-                    replace_string(target_DNA, count, "0")
-                else:
-                    replace_string(target_DNA, count, "1")
-            count = count + 1
-
-    return target_DNA
-
-
-# 杂交
-def crossover():
-    global new_generation_species
-
-    # 杂交
-    best_individual_of_last_generation = species[0]
-    while 1:
-        # 如果新世代个体数大于等于上一世代则停止
-        if len(new_generation_species) >= len(species):
-            break
-        # 将上一世代最强的染色体复制填满新世代
-        new_generation_species.append(best_individual_of_last_generation)
-
-    Offspring_list = []
-    odd_DNA_list = new_generation_species[::2]  # 奇数
-    even_DNA_list = new_generation_species[1::2]  # 偶数
-    count = 0
-    while 1:
-        if count >= len(odd_DNA_list) - 1:
-            break
-        # 奇数排序的个体
-        temp_left_DNA_odd = odd_DNA_list[count][12:20]
-        temp_right_DNA_odd = odd_DNA_list[count][:12]
-        # 偶数排序的个体
-        temp_left_DNA_even = even_DNA_list[count][12:20]
-        temp_right_DNA_even = even_DNA_list[count][:12]
-
-        # 两个后代
-        Offspring_A = temp_left_DNA_odd + temp_right_DNA_even
-        Offspring_B = temp_left_DNA_even + temp_right_DNA_odd
-
-        # 突变(控制概率突变，随机改变其中一位二级制数字）
-        Offspring_A = mutation(Offspring_A, 10)
-        Offspring_B = mutation(Offspring_B, 10)
-
-        # 验证是否有重复的元素（经过地点），如果有的话随机生成一条新的染色体
-        if validator_of_repeated_element(Offspring_A):
-            Offspring_list.append(get_new_individual())
-        else:
-            Offspring_list.append(Offspring_A)
-        if validator_of_repeated_element(Offspring_A):
-            Offspring_list.append(get_new_individual())
-        else:
-            Offspring_list.append(Offspring_B)
-
-        count = count + 1
-
-    while 1:
-        # 如果新世代个体数大于等于上一世代则停止
-        if len(Offspring_list) >= len(species):
-            break
-        # 将上一世代最强的染色体复制填满新世代
-        if validator_of_repeated_element(best_individual_of_last_generation):
-            Offspring_list.append(get_new_individual())
-        else:
-            Offspring_list.append(best_individual_of_last_generation)
-
-    new_generation_species = Offspring_list
-
-
-# 初始化
-def initialization():
-    global species
-    global new_generation_species
-    species = new_generation_species
-    new_generation_species = []  # 每一轮都要在最后清空下一代（将处理写回species）
-    global total_fitness_list
-    total_fitness_list = []
-    generation_process()  # 每一代初始化后的一些处理
-
-    # if (temp_best_fitness == 176.77669529663686):
-    #     return True
+    # 可视化
+    plt.figure(figsize=(8, 10))
+    plt.subplot(211)
+    plt.plot(every_gen_best)  # 画每一代中最优路径的路径长度
+    plt.subplot(212)
+    plt.scatter(x, y)  # 画点
+    plt.plot(x, y)  # 画点之间的连线
+    plt.grid()  # 给画布添加网格
+    plt.show()
 
 
 if __name__ == '__main__':
-    # 生成种群（多个个体）(每条染色体（个体）为一个解法，dna解码后为 从0-15日中的5个不重复的的数字)
-    # 编码（直接二进制对应，（0000-1111)）
-    # 解码（直接二进制对应）
-    # 选择
-    # 杂交（）
-    # 突变（）
-    # 适应度（路径长度，越短 适应度越高）
+    # 打印城市的坐标
+    # position = pd.read_csv("cities_S.csv", names=['ind', 'lon','lat'])
+    # plt.scatter(x=position['lon'], y=position['lat'])
+    # plt.show()
+    # position.head()
 
-    initialize_species(100)  # 初始设定个体个数
-    rounds = 200  # 进行轮数
-    count = 0
-    generation_process()  # 每一代初始化后的一些处理
-    while count < rounds:
-        selection()  # 选择，优秀的进入下一代
-        crossover()  # 杂交，复制
-        # print(new_generation_species)
-        initialization()  # 初始化(在最后)
-        # if(initialization()):
-        #     break          
-        count = count + 1
-        temp_best_fitness = calculate_fitness(decode(species[0]))
-        print("best case: ",decode(species[0]))
-        print("fitness of best case is :", temp_best_fitness)
-        print("current generation is : ", count)
-    #
-    print("the final result: ", calculate_fitness(decode(species[0])))
-    print("the final result: ", decode(species[0]))
+    filepath = r'cities_M.csv'  # 城市坐标数据文件
+    p_num = 200  # 种群个体数量
+    gen = 3000  # 进化代数
+    pm = 0.2  # 变异率
+    # for i in range(5):
+    #     main(filepath, p_num, gen, pm)
+    for i in range(1):
+        main(filepath, p_num, gen, pm)
 
-
-    '''
-    # 替换最菜的两个
-    species[len(species)-1] = Offspring_A
-    species[len(species)-2] = Offspring_B
-
-    temp_fitness = calculate_fitness(
-        decode(species[0]))
-
-    if temp_fitness not in temp_fitness_list:
-        temp_fitness_list.append(temp_fitness)
-    '''
