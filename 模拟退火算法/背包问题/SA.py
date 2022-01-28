@@ -22,8 +22,8 @@ import question
 # S ：10
 # M ：100
 # L ：1000
-weight = copy.copy(question.data("S")[0])
-price = copy.copy(question.data("S")[1])
+weight = copy.copy(question.data("M")[0])
+price = copy.copy(question.data("M")[1])
 
 # 验证修改后是否符合规则
 def validate(list):

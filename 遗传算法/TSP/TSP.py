@@ -223,6 +223,7 @@ def main(filepath, p_num, gen, pm):
     plt.show()
 
 
+
 if __name__ == '__main__':
     # 打印城市的坐标
     # position = pd.read_csv("cities_S.csv", names=['ind', 'lon','lat'])

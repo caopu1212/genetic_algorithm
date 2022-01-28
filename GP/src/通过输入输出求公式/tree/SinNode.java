@@ -1,0 +1,21 @@
+package src.通过输入输出求公式.tree;
+
+public class SinNode extends Node {
+    public SinNode(OperatorNode left) {
+        super(0.0, left, null, "Sin");
+    }
+
+    public Double operate() {
+        return Math.sin(this.getLeft().operate());
+    }
+
+
+    public boolean isFunction() {
+        return true;
+    }
+
+    public OperatorNode cloneTree() {
+        return new SinNode(this.getLeft().cloneTree());
+    }
+}
+

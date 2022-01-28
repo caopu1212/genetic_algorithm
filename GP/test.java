@@ -1,35 +1,47 @@
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.util.Random;
+
+import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
+import lombok.Data;
+import lombok.ToString;
+
+import java.lang.reflect.Member;
+import java.util.ArrayList;
+import java.util.List;
 
 public class test {
-    static Random random = new Random();
+
 
     public static void main(String[] args) {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("js");
 
-        String str1 = "3*3*3+3*3+3";
-        Object result1 = null;
-        try {
-            result1 = engine.eval(str1);
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        }
-        System.out.println("结果类型:" + result1.getClass().getName() + ",计算结果:" + result1);
+        ArrayList<Double> list = new ArrayList<Double>();
+        list.add(12.5);
+        list.add(1.0);
+        list.add(15.5);
 
-
-//        for (int i = 0; i < 5000; i++) {
-//            //random.nextInt(max)%(max-min+1) + min;
-//            String randomNum = String.valueOf(random.nextInt(50-20)-20);
-//
-//            System.out.println(randomNum);
-//
-//        }
-
-        Double test = 123.0/0;
-        System.out.println(test);
+        System.out.println(list.stream().mapToDouble(a ->a).sum());
 
     }
+
+    private static member createNewMember(String name, String gender) {
+        member member = new member();
+        member.setName(name);
+        member.setGender(gender);
+        return member;
+    }
+
+
+    private static String print(String s, String dd) {
+
+        System.out.println(s);
+
+        return s;
+    }
+
+}
+
+@Data
+@ToString
+class member {
+    private String name;
+    private String age;
+    private String gender;
 }

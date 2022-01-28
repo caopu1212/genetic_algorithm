@@ -18,8 +18,8 @@ import math
 import time
 import question
 
-weight = copy.copy(question.data("L")[0])
-price = copy.copy(question.data("L")[1])
+weight = copy.copy(question.data("M")[0])
+price = copy.copy(question.data("M")[1])
 
 # 验证修改后是否符合规则
 def validate(list):
@@ -130,7 +130,7 @@ def main_logic(round, localStable_count, strat_list):
                 # 扰动
                 new_solution = copy.copy(perturbate(localBest_solution))
                 break
-        if calculate_fitness(globalBest_solution) >= 200:
+        if calculate_fitness(globalBest_solution) >= 300:
             break
         end = time.time()
         # 运行时间
@@ -168,10 +168,10 @@ if __name__ == '__main__':
         time_list.append(end-start)
         fitness_list.append(calculate_fitness(temp))
 
-    for i in time_list:
-        print (i)
-    for i in fitness_list:
-        print (i)
+    # for i in time_list:
+    #     print (i)
+    # for i in fitness_list:
+    #     print (i)
 
 
 
