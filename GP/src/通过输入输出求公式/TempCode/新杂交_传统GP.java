@@ -1,4 +1,4 @@
-package src.通过输入输出求公式.gp;
+package src.通过输入输出求公式.TempCode;
 
 import src.通过输入输出求公式.tree.*;
 
@@ -341,29 +341,6 @@ public class 新杂交_传统GP {
 
     public static void main(String[] args) throws ScriptException {
         新杂交_传统GP gp = new 新杂交_传统GP();
-        //Function is p(x) = x^2 + x
-        //p(-1) = 2
-        //p(0) = 0
-        //p(1) = 2
-//        int[] example = {2, 0, 2};
-
-        //Function is p(x) = x^2 + x + 1
-        //p(-1) = 1
-        //p(0) = 1
-        //p(1) = 3
-//         int[] example = {1, 1, 3};
-
-        //Function is p(x) = x^2
-        //p(-1) = 1
-        //p(0) = 0
-        //p(1) = 1
-//         int[] example = {1,0,1};
-
-
-        //Function is p(x) = x^4 + x^3 + x^2 + x
-        //p(-1) = 0
-        //p(0) = 0
-        //p(1) = 4
         int[] example = {0, 0, 4};
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 

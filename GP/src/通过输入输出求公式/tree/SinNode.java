@@ -1,5 +1,6 @@
 package src.通过输入输出求公式.tree;
 
+//@NodeImpl(order = 3)
 public class SinNode extends Node {
     public SinNode(OperatorNode left) {
         super(0.0, left, null, "Sin");

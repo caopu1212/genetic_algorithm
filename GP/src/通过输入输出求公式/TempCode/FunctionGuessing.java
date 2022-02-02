@@ -1,4 +1,4 @@
-package src.通过输入输出求公式.gp;
+package src.通过输入输出求公式.TempCode;
 
 import src.通过输入输出求公式.tree.*;
 

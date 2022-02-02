@@ -1,5 +1,5 @@
 package src.通过输入输出求公式.tree;
-
+@NodeImpl(order = 1)
 public class SubNode extends Node {
   public SubNode(OperatorNode left, OperatorNode right) {
     super(0.0, left, right, "-");

@@ -1,27 +1,31 @@
-package src.通过输入输出求公式.gp;
+package src.通过输入输出求公式.TempCode;
 
 import src.通过输入输出求公式.tree.*;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
  * Given a function p(x), find h(x) such as p(x) = h(x) for x in [-1,1].
  * Will only test for x = 0, x = 1, x = -1.
  * <p>
- * 通过入参拟合多项式
+ * 对于p(x), 通过给定一定范围内一定数量x的结果， 来找符合的公式。
  * 树结构：
- * 操作符：+，-，*...
+ * 操作符：+，-，*
  * 变量：x
  */
 
-public class BaseGenetic {
-    public int totalGenerations = 1;
-    public Random random = new Random();
+/**
+ *
+ *
+ */
+
+
+public class 新杂交_Tent映射 {
+    private int totalGenerations = 1;
+    private Random random = new Random();
     public static ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
     //key：x
     //value：结果
@@ -31,33 +35,24 @@ public class BaseGenetic {
 
     public static OperatorNode bestIndividual;
 
-    private static List<Class<? extends Node>> nodeClassList = Node.getNodeClassList();
 
-    /**
-     * 获得一维混沌映射
-     *
-     * @param amountOfChaosMapping
-     * @return mapping list
-     */
-    public ArrayList chaosMapping(int amountOfChaosMapping) {
-        double μ = 4;
+    public void evaluateChaoticFactors(int amountOfChaosMapping, int amountOfTree, int amountOfChaosFactor,int sizeOfTree , int[] set) {
         ArrayList mappingList = new ArrayList();
         for (int j = 0; j < amountOfChaosMapping; j++) {
             ArrayList subList = new ArrayList();
             Random random = new Random();
             double x = random.nextDouble();
-            for (int i = 0; i < 100; i++) {
-                x = x * μ * (1 - x);
+            for (int i = 0; i < 1000; i++) {
+                if(x < 0.5){
+                    x = 2 * x;
+                }else{
+                    x = 2*(1-x);
+                }
                 subList.add(x);
             }
             mappingList.add(subList);
         }
-        return mappingList;
-    }
 
-    public void evaluateChaoticFactors(int amountOfChaosMapping, int amountOfTree, int amountOfChaosFactor, int sizeOfTree) {
-
-        ArrayList mappingList = chaosMapping(amountOfChaosMapping);
         ArrayList weightForOperatorList = new ArrayList();
 
         Double count = 0.0;
@@ -72,18 +67,15 @@ public class BaseGenetic {
 //                probabilityList.add(temp.get(random.nextInt(temp.size())));
 //            }
             //前n个值
-            for (int i = 0; i < nodeClassList.size(); i++) {
+            for (int i = 0; i < 3; i++) {
                 probabilityList.add(temp.get(i));
             }
-//            for (int i = 0; i < 4; i++) {
-//                probabilityList.add(temp.get(i));
-//            }
 
 
             weightForOperatorList.add(probabilityList);
         }
 
-        BaseGenetic chaotic = new BaseGenetic();
+        新杂交_Tent映射 chaotic = new 新杂交_Tent映射();
         ArrayList chaoticList = weightForOperatorList;
         HashMap<ArrayList, ArrayList> chaoticMap = new HashMap<>();
         count = 0.0;
@@ -95,9 +87,9 @@ public class BaseGenetic {
             ArrayList<OperatorNode> chaoticPopulationList = new ArrayList();
             ArrayList probabilityList = (ArrayList) probabilityList_;
             for (int i = 0; i < amountOfTree; i++) {
-                OperatorNode chaoticPopulation = chaotic.generateTree(sizeOfTree, probabilityList);
+                OperatorNode chaoticPopulation = chaotic.generateTree(0, sizeOfTree, probabilityList);
 
-                chaotic.evaluateFitnessChaotic(chaoticPopulation);
+                chaotic.evaluateFitnessChaotic(chaoticPopulation, set);
 
 
 //                System.out.println(chaoticPopulation.printContent());
@@ -122,7 +114,7 @@ public class BaseGenetic {
             Double average = chaotic.calculateAverageFitness(chaoticPopulationList);
 //            System.out.println("average = " + average);
             totalAverage = totalAverage + average;
-//            System.out.println(totalAverage);
+            System.out.println(totalAverage);
 
 
             int size = amountOfChaosFactor;
@@ -147,111 +139,74 @@ public class BaseGenetic {
 
 
     //Generate base of the tree, avoids generating a single node
-    public OperatorNode generateTree(int depth, ArrayList probabilityList) {
+    private OperatorNode generateTree(int cap, int depth, ArrayList probabilityList) {
         //将混沌映射三个一组遍历分配给运算符，并进行轮盘赌计算选择概率
 //        for (Object probabilityList_ : chaoticList) {
         ArrayList<Double> tempList = new ArrayList();
         for (int i = 0; i < probabilityList.size(); i++) {
 //            tempList.add((Double) probabilityList.get(random.nextInt(probabilityList.size())));
             tempList.add((Double) probabilityList.get(i));
-//            if (tempList.size() == 4) {
-//                break;
-//            }
+            if (tempList.size() == 3) {
+                Double total = tempList.get(0) + tempList.get(1) + tempList.get(2);
+
+                //累计概率
+                Double cumulativeCount = 0.0;
+                ArrayList<Double> individualProbability = new ArrayList();
+                // 加减乘
+                individualProbability.add(tempList.get(0) / total);
+                individualProbability.add(tempList.get(1) / total);
+                individualProbability.add(tempList.get(2) / total);
+
+                ArrayList<Double> cumulativeProbability = new ArrayList<>();
+
+                //添加累计概率list
+                for (int j = 0; j < individualProbability.size(); j++) {
+                    cumulativeCount = cumulativeCount + individualProbability.get(j);
+                    cumulativeProbability.add(cumulativeCount);
+                }
+                Double value = random.nextDouble();
+
+                //轮盘赌,按权重选择操作符
+                for (int j = 0; j < cumulativeProbability.size(); j++) {
+                    if (value < cumulativeProbability.get(0)) {
+                        return new SumNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
+                    } else if (value < cumulativeProbability.get(1)) {
+                        return new SubNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
+                    } else if (value < cumulativeProbability.get(2)) {
+                        return new MultNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
+                    }
+                }
+                tempList = null;
+            }
         }
-//                Double total = tempList.get(0) + tempList.get(1) + tempList.get(2) + tempList.get(3);
-        Double total = tempList.stream().mapToDouble(a -> a).sum();
-        //累计概率
-        Double cumulativeCount = 0.0;
-        ArrayList<Double> individualProbability = new ArrayList();
-        for (int i = 0; i < tempList.size(); i++) {
-            individualProbability.add(tempList.get(i) / total);
-        }
-        // 加减乘 sin
-//        individualProbability.add(tempList.get(0) / total);
-//        individualProbability.add(tempList.get(1) / total);
-//        individualProbability.add(tempList.get(2) / total);
-//        individualProbability.add(tempList.get(3) / total);
-
-        ArrayList<Double> cumulativeProbability = new ArrayList<>();
-
-
-        //添加累计概率list
-        for (int j = 0; j < individualProbability.size(); j++) {
-            cumulativeCount = cumulativeCount + individualProbability.get(j);
-            cumulativeProbability.add(cumulativeCount);
-        }
-        Double value = random.nextDouble();
-
-        //轮盘赌,按权重选择操作符
-//                for (int j = 0; j < cumulativeProbability.size(); j++) {
-//                    if (value < cumulativeProbability.get(0)) {
-//                        return new SumNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
-//                    } else if (value < cumulativeProbability.get(1)) {
-//                        return new SubNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
-//                    } else if (value < cumulativeProbability.get(2)) {
-//                        return new MultNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
-//                    } else if (value < cumulativeProbability.get(3)) {
-//                        return new SinNode(generateRecursiveTree(depth, cumulativeProbability));
-//                    }
-//                }
-        return generateNewNode(value, cumulativeProbability, depth);
-
-
-//                tempList = null;
-//        }
-//    }
-//        return null;
+        return null;
     }
 
     //Generate rest of the tree
-    public OperatorNode generateRecursiveTree(int depth, ArrayList<Double> cumulativeProbability) {
+    private OperatorNode generateRecursiveTree(int cap, int depth, ArrayList<Double> cumulativeProbability) {
         if (depth == 0) {
             return new TerminalX1();
         }
 
-        int valueOfTerminate = random.nextInt(nodeClassList.size()+1);
+        int valueOfTerminate = random.nextInt(4);
 
-        //   变量/操作符+变量 的概率为terminal node
+        //有四分之一概率为末节点
         if (valueOfTerminate == 0) {
             return new TerminalX1();
         } else {
-            //轮盘赌 +-* sin
+            //轮盘赌
             Double value = random.nextDouble();
-//            for (int j = 0; j < cumulativeProbability.size(); j++) {
-            return generateNewNode(value, cumulativeProbability, depth);
-
-
-//            }
+            for (int j = 0; j < cumulativeProbability.size(); j++) {
+                if (value < cumulativeProbability.get(0)) {
+                    return new SumNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
+                } else if (value < cumulativeProbability.get(1)) {
+                    return new SubNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
+                } else if (value < cumulativeProbability.get(2)) {
+                    return new MultNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
+                }
+            }
         }
-//        return null;
-    }
-
-    public Node generateNewNode(Double value, ArrayList<Double> cumulativeProbability, int depth) {
-        int i;
-        for (i = 0; i < cumulativeProbability.size(); i++) {
-            if(value < cumulativeProbability.get(i))
-                break;
-        }
-
-        Constructor con = nodeClassList.get(i).getDeclaredConstructors()[0];
-        try {
-            OperatorNode leftNode = generateRecursiveTree(depth - 1, cumulativeProbability);
-            return (Node)con.newInstance(con.getParameterCount() > 1 ? Arrays.asList(leftNode, generateRecursiveTree(depth - 1, cumulativeProbability)).toArray() : Arrays.asList(leftNode).toArray());
-        } catch (Exception e) {
-            return null;
-        }
-
-
-//        if (value < cumulativeProbability.get(0)) {
-//            return new SumNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
-//        } else if (value < cumulativeProbability.get(1)) {
-//            return new SubNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
-//        } else if (value < cumulativeProbability.get(2)) {
-//            return new MultNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
-//        } else if (value < cumulativeProbability.get(3)) {
-//            return new SinNode(generateRecursiveTree(depth - 1, cumulativeProbability));
-//        }
-//        return null;
+        return null;
     }
 
     /**
@@ -260,28 +215,14 @@ public class BaseGenetic {
      * @param root
      * @param replacement
      */
-    public void parse(OperatorNode root, Double replacement) {
-
-
-        boolean leftIsTermial = root.getLeft().isTerminal();
-        boolean rightIsTermial = false;
-        if (root.getRight() != null) {
-            rightIsTermial = root.getRight().isTerminal();
-        }
-
-        if (leftIsTermial && rightIsTermial) {
+    private void parse(OperatorNode root, Double replacement) {
+        if (root.getLeft().isTerminal() && root.getRight().isTerminal()) {
             root.setLeft(new TerminalX1(replacement));
             root.setRight(new TerminalX1(replacement));
-        } else if (leftIsTermial && root.getRight() == null) {
-            root.setLeft(new TerminalX1(replacement));
-            root.setRight(null);
-        } else if (!leftIsTermial && root.getRight() == null) {
-            parse(root.getLeft(), replacement);
-            root.setRight(null);
-        } else if (leftIsTermial && !rightIsTermial) {
+        } else if (root.getLeft().isTerminal() && !root.getRight().isTerminal()) {
             root.setLeft(new TerminalX1(replacement));
             parse(root.getRight(), replacement);
-        } else if (rightIsTermial && !leftIsTermial) {
+        } else if (root.getRight().isTerminal() && !root.getLeft().isTerminal()) {
             root.setRight(new TerminalX1(replacement));
             parse(root.getLeft(), replacement);
         } else {
@@ -290,21 +231,23 @@ public class BaseGenetic {
         }
     }
 
-    public Double evaluate(OperatorNode clone) {
+    private Double evaluate(OperatorNode clone, int solutions[]) {
         Double evaluation = 0.0;
         Double totalInput = Double.valueOf(inputValue.size());
         for (Map.Entry<Double, Double> input : inputValue.entrySet()) {
             //将树的变量替换为目标输入
             parse(clone, input.getKey());
             //方案一：每对一个 总数-1
+//
+
 //            if (clone.operate() == input.getValue()) {
 //                totalInput = totalInput - 1;
 //           }
 //            //方案二; 当前input - 目标结果的绝对值，相加，
-//            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
+            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
 
-//            方案三; 最小二乘
-            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(), 2);
+            //方案三; 最小二乘
+//            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(),2);
         }
 
 //        evaluation = totalInput;
@@ -312,19 +255,9 @@ public class BaseGenetic {
         return evaluation;
     }
 
-    public OperatorNode pickStop(OperatorNode root) {
-
-
+    private OperatorNode pickStop(OperatorNode root) {
         if (root.isTerminal()) {
             return root;
-        }
-        if (root.getRight() == null) {
-            int decision = random.nextInt(2);
-            if (decision == 0) {
-                return pickStop(root.getLeft());
-            } else if (decision == 1) {
-                return root;
-            }
         }
 
         int decision = random.nextInt(3);
@@ -337,7 +270,7 @@ public class BaseGenetic {
         }
     }
 
-    public OperatorNode crossOver(OperatorNode dad, OperatorNode mom, int mutationRate) {
+    private OperatorNode crossOver(OperatorNode dad, OperatorNode mom, int mutationRate) {
         int mutation = random.nextInt(100), decision = random.nextInt(2);
         OperatorNode cloneDad = dad.cloneTree(), cloneMom = mom.cloneTree();
         OperatorNode dadStopPoint = pickStop(cloneDad), momStopPoint = pickStop(cloneMom);
@@ -351,9 +284,9 @@ public class BaseGenetic {
         } else {
             int index = random.nextInt(betterChaoticMapping.size());
             if (decision == 0) {
-                dadStopPoint.setLeft(generateTree(1, betterChaoticMapping.get(index)));
+                dadStopPoint.setLeft(generateTree(0, 1, betterChaoticMapping.get(index)));
             } else {
-                dadStopPoint.setRight(generateTree(1, betterChaoticMapping.get(index)));
+                dadStopPoint.setRight(generateTree(0, 1, betterChaoticMapping.get(index)));
             }
         }
 
@@ -364,8 +297,10 @@ public class BaseGenetic {
         OperatorNode[] population = new Node[size];
 
         for (int i = 0; i < size; i++) {
-            population[i] = generateTree(depth, betterChaoticMapping.get(random.nextInt(betterChaoticMapping.size())));
+            population[i] = generateTree(0, depth, betterChaoticMapping.get(random.nextInt(betterChaoticMapping.size())));
+
             System.out.println("new population: " + population[i].printContent());
+
         }
 
         return population;
@@ -393,20 +328,21 @@ public class BaseGenetic {
      * 计算fitness
      *
      * @param population
+     * @param set
      * @return
      */
-    public void evaluateFitnessChaotic(OperatorNode population) {
+    public void evaluateFitnessChaotic(OperatorNode population, int[] set) {
         OperatorNode clone = population.cloneTree();
-        Double result = evaluate(clone);
+        Double result = evaluate(clone, set);
         population.setFitness(Math.abs(result));
     }
 
 
-    public boolean evaluateFitness(OperatorNode[] population) {
+    public boolean evaluateFitness(OperatorNode[] population, int[] set) {
         boolean sequenceFound = false;
         for (int i = 0; i < population.length; i++) {
             OperatorNode clone = population[i].cloneTree();
-            Double result = evaluate(clone);
+            Double result = evaluate(clone, set);
             if (result == 0) {
                 sequenceFound = true;
                 System.out.println("Content of tree (in reverse order): " + population[i].printContent());
@@ -445,9 +381,9 @@ public class BaseGenetic {
             //保留1位小数
 //             randomNum = String.valueOf(String.format("%.1f", random.nextDouble() * (scopeEnd - scopeStart) + scopeStart));
             //保留整数
+
 //            randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
 //            randomNum = randomNum.substring(0, randomNum.lastIndexOf(".")) + ".0";
-
             //保证不出现重复入参
             while (true) {
                 randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
@@ -497,7 +433,7 @@ public class BaseGenetic {
         }
     }
 
-    public OperatorNode[] reproduction(OperatorNode[] population, int size, int mutationRate) {
+    public OperatorNode[] reproduction(OperatorNode[] population, int size) {
         OperatorNode[] breed = new OperatorNode[size];
         int filled = 0;
 
@@ -508,13 +444,13 @@ public class BaseGenetic {
             individuals[0] = tournamentSelection(population);
             individuals[1] = tournamentSelection(population);
 
-            breed[filled++] = crossOver(individuals[0], individuals[1], mutationRate);
+            breed[filled++] = crossOver(individuals[0], individuals[1], 5);
         }
 
         return breed;
     }
 
-    public void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation, int mutationRate) {
+    private void geneticAlgorithm(int size,int depth ,int[] set, OperatorNode[] initialPopulation) {
 
         if (totalGenerations % 50 == 0) {
             System.out.println("At " + totalGenerations + " gens");
@@ -524,28 +460,126 @@ public class BaseGenetic {
 
         if (totalGenerations == 100) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
-//            System.out.println("best case: "+bestIndividual.printContent());
+
 //            System.out.println(initialPopulation[0].printContent());
             return;
         }
 
         OperatorNode[] population;
-        if (initialPopulation == null) population = initiatePopulation(size, depth);
+        if (initialPopulation == null) population = initiatePopulation(size,depth);
         else population = initialPopulation;
 
-        if (evaluateFitness(population)) {
+        if (evaluateFitness(population, set)) {
             return;
         } else {
-            OperatorNode[] breed = reproduction(population, size, mutationRate);
+
+
+            OperatorNode[] breed = reproduction(population, size);
             ++this.totalGenerations;
-            geneticAlgorithm(size, depth, breed, mutationRate);
+            geneticAlgorithm(size,depth, set, breed);
         }
     }
 
 
-    public int getNumberOfGenerations() {
+    private int getNumberOfGenerations() {
         return this.totalGenerations;
     }
 
 
+    public static void main(String[] args) throws ScriptException {
+        新杂交_Tent映射 gp = new 新杂交_Tent映射();
+
+        int[] example = {0, 0, 4};
+
+//            String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
+
+
+
+//
+//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+
+//        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+
+
+//        String formula = "x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x - x*x*x*x*x+x*x*x*x+x*x*x+x*x + x";//x^8+x^7+x^6-x^5+x^4 + x^3 + x^2 + x
+//
+//        String formula = "x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+        String formula = "2*x*x*x*x*x*x*x+x*x*x*x*x*x-5*x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//2x^7+x^6-5x^5+x^4 + x^3 + x^2 + x
+
+//        String formula = "x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^6+x^5+x^4 + x^3 + x^2 + x
+
+//        String formula = "x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^5+x^4 + x^3 + x^2 + x
+//        String formula = "(5*x*x*x*x*x)-(x*x*x*x)+(6*x*x*x)+(x*x)-(x)";//5x^5*-x^4 + 6x^3 + x^2 - x
+
+//        String formula = "x*x*x*x+x*x*x+x*x+x";//x^4 + x^3 + x^2 + x
+//        String formula = "15*x*x*x*x+20*x*x*x-120*x*x+200*x";//15x^4 + 20x^3 -120x^2 + 200x
+
+//        String formula = "x*x*x+x*x+x";//x^3 + x^2 + x
+//        String formula = "(x*x*x)+(x*x*2)+5*x";//x^3 + 2x^2 + 5x
+//        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
+
+        // 控制 目标公式，入参数量，参数区间
+        gp.initializeSolution(formula, 10, -50.0, 50.0);
+
+        long totalStartTime = System.currentTimeMillis();
+
+
+//        for (int i = 0; i < 10; i++) {
+//        }
+//        gp.evaluateChaoticFactors(10000, 3, 10,4, example);
+
+        ArrayList<Long> timeList = new ArrayList();
+        ArrayList<Integer> generationList = new ArrayList();
+
+        for (int i = 0; i < 20; i++) {
+            inputValue.clear();
+            // 控制 目标公式，入参数量，参数区间
+            gp.initializeSolution(formula, 10, -50.0, 50.0);
+            gp.evaluateChaoticFactors(10000, 1, 10 ,8, example);
+
+            long startTime = System.currentTimeMillis();
+            gp.geneticAlgorithm(1000,3, example, null);
+            long stopTime = System.currentTimeMillis();
+
+            System.out.println("Elapsed time is: " + (stopTime - startTime));
+            System.out.println("Number of generations was: " + gp.getNumberOfGenerations());
+
+            timeList.add(stopTime - startTime);
+            generationList.add(gp.getNumberOfGenerations());
+
+            //初始化
+            gp.totalGenerations = 1;
+
+            min = 100000000.0;
+            gp.bestIndividual = null;
+        }
+        System.out.println("Time: " + timeList);
+        System.out.println("Number of generations : " + generationList);
+
+        long totalStopTime = System.currentTimeMillis();
+
+        System.out.println("total time= " + (totalStopTime - totalStartTime));
+
+
+        Long total = Long.valueOf(0);
+        for (Long time : timeList) {
+            total += time;
+        }
+        System.out.println("时间均值：" + total / timeList.size());
+
+        Long total1 = Long.valueOf(0);
+        for (Integer generation : generationList) {
+            total1 += generation;
+        }
+        System.out.println("迭代数均值：" + total1 / generationList.size());
+
+
+//        System.out.println("chaos factors is ：" + betterChaoticMapping);
+    }
+// TODO: 2021/12/18  重写杂交方法！ DONE
+
+    // TODO: 2021/12/21  让 initializeSolution 随机不重复 DONE
+
+
+//// TODO: 2021/12/22 cubic映射: xn+1＝f(xn)＝axn3+(1-a)xn  ,其中xn∈(-1,+1)是状态值，a是控制参数。当a∈(3.3,4]，cubic映射处于混沌状态。
 }

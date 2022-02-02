@@ -1,4 +1,4 @@
-package src.通过输入输出求公式.gp;
+package src.通过输入输出求公式.TempCode;
 
 import src.通过输入输出求公式.tree.*;
 
@@ -11,13 +11,19 @@ import java.util.*;
  * Given a function p(x), find h(x) such as p(x) = h(x) for x in [-1,1].
  * Will only test for x = 0, x = 1, x = -1.
  * <p>
- * 通过入参拟合多项式
+ * 对于p(x), 通过给定一定范围内一定数量x的结果， 来找符合的公式。
  * 树结构：
  * 操作符：+，-，*
  * 变量：x
  */
 
-public class 新杂交 {
+/**
+ *
+ *
+ */
+
+
+public class 新杂交_用随机映射 {
     private int totalGenerations = 1;
     private Random random = new Random();
     public static ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
@@ -30,16 +36,17 @@ public class 新杂交 {
     public static OperatorNode bestIndividual;
 
 
-    public void evaluateChaoticFactors(int amountOfChaosMapping, int amountOfTree, int amountOfChaosFactor, int sizeOfTree, int[] set) {
+    public void evaluateChaoticFactors(int amountOfChaosMapping, int amountOfTree, int amountOfChaosFactor,int sizeOfTree , int[] set){
         double μ = 4;
         ArrayList mappingList = new ArrayList();
         ArrayList mappingList_ = new ArrayList();
         for (int j = 0; j < amountOfChaosMapping; j++) {
             ArrayList subList = new ArrayList();
             Random random = new Random();
-            double x = random.nextDouble();
-            for (int i = 0; i < 1000; i++) {
-                x = x * μ * (1 - x);
+//            double x = random.nextDouble();
+            for (int i = 0; i < 500; i++) {
+                double x = random.nextDouble();
+//                x = x * μ * (1 - x);
                 subList.add(x);
             }
             mappingList.add(subList);
@@ -50,7 +57,7 @@ public class 新杂交 {
         Double count = 0.0;
         // 遍历生成的logistic mapping，随机取一定数量的数据作为操作符的权重（之后按顺序分配给运算符的概率）
         for (Object mapping : mappingList) {
-            System.out.println("part1 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
+            System.out.println("part1 训练进度：" + count++/amountOfChaosMapping * 100 + "%");
 
             ArrayList probabilityList = new ArrayList();
             ArrayList temp = (ArrayList) mapping;
@@ -63,23 +70,23 @@ public class 新杂交 {
                 probabilityList.add(temp.get(i));
             }
 
-
+            
             weightForOperatorList.add(probabilityList);
         }
 
-        新杂交 chaotic = new 新杂交();
+        新杂交_用随机映射 chaotic = new 新杂交_用随机映射();
         ArrayList chaoticList = weightForOperatorList;
         HashMap<ArrayList, ArrayList> chaoticMap = new HashMap<>();
-        count = 0.0;
+         count = 0.0;
         //对不同的映射进行amountOfTree次树生成，看平均值
         for (Object probabilityList_ : chaoticList) {
-            System.out.println("part2 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
+            System.out.println("part2 训练进度：" + count++/amountOfChaosMapping * 100 + "%");
 
 
             ArrayList<OperatorNode> chaoticPopulationList = new ArrayList();
             ArrayList probabilityList = (ArrayList) probabilityList_;
             for (int i = 0; i < amountOfTree; i++) {
-                OperatorNode chaoticPopulation = chaotic.generateTree(0, sizeOfTree, probabilityList);
+                OperatorNode chaoticPopulation = chaotic.generateTree(10, 3, probabilityList);
 
                 chaotic.evaluateFitnessChaotic(chaoticPopulation, set);
 
@@ -106,7 +113,6 @@ public class 新杂交 {
             Double average = chaotic.calculateAverageFitness(chaoticPopulationList);
 //            System.out.println("average = " + average);
             totalAverage = totalAverage + average;
-//            System.out.println(totalAverage);
 
 
             int size = amountOfChaosFactor;
@@ -125,7 +131,7 @@ public class 新杂交 {
             }
         }
 
-        System.out.println("平均平均值为：" + totalAverage / amountOfChaosMapping);
+        System.out.println("平均平均值为：" + totalAverage/amountOfChaosMapping);
         System.out.println("bestFitessList : " + bestFitessList);
     }
 
@@ -230,14 +236,13 @@ public class 新杂交 {
             //将树的变量替换为目标输入
             parse(clone, input.getKey());
             //方案一：每对一个 总数-1
+//
+
 //            if (clone.operate() == input.getValue()) {
 //                totalInput = totalInput - 1;
 //           }
 //            //方案二; 当前input - 目标结果的绝对值，相加，
-//            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
-
-//            方案三; 最小二乘
-            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(),2);
+            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
         }
 
 //        evaluation = totalInput;
@@ -283,11 +288,11 @@ public class 新杂交 {
         return cloneDad;
     }
 
-    public OperatorNode[] initiatePopulation(int size, int depth) {
+    public OperatorNode[] initiatePopulation(int size) {
         OperatorNode[] population = new Node[size];
 
         for (int i = 0; i < size; i++) {
-            population[i] = generateTree(0, depth, betterChaoticMapping.get(random.nextInt(betterChaoticMapping.size())));
+            population[i] = generateTree(0, 3, betterChaoticMapping.get(random.nextInt(betterChaoticMapping.size())));
 
             System.out.println("new population: " + population[i].printContent());
 
@@ -364,16 +369,13 @@ public class 新杂交 {
         ArrayList randomNumberList = new ArrayList();
 
         for (int i = 0; i < amountOfValue; i++) {
-            String randomNum;
             //java只能生成0到1之间随机数，因此手动写范围
             //Math.random() * (Max - Min) + Min
-//             randomNum = String.valueOf(random.nextDouble() * (scopeEnd  - scopeStart)+ scopeStart);
+//            String randomNum = String.valueOf(random.nextDouble() * (scopeEnd  - scopeStart)+ scopeStart);
             //保留1位小数
-//             randomNum = String.valueOf(String.format("%.1f", random.nextDouble() * (scopeEnd - scopeStart) + scopeStart));
+//            String randomNum = String.valueOf(String.format("%.1f", random.nextDouble() * (scopeEnd - scopeStart) + scopeStart));
             //保留整数
-//            randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
-//            randomNum = randomNum.substring(0, randomNum.lastIndexOf(".")) + ".0";
-
+            String randomNum;
             //保证不出现重复入参
             while (true) {
                 randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
@@ -434,13 +436,13 @@ public class 新杂交 {
             individuals[0] = tournamentSelection(population);
             individuals[1] = tournamentSelection(population);
 
-            breed[filled++] = crossOver(individuals[0], individuals[1], 50);
+            breed[filled++] = crossOver(individuals[0], individuals[1], 5);
         }
 
         return breed;
     }
 
-    private void geneticAlgorithm(int size, int depth, int[] set, OperatorNode[] initialPopulation) {
+    private void geneticAlgorithm(int size, int[] set, OperatorNode[] initialPopulation) {
 
         if (totalGenerations % 50 == 0) {
             System.out.println("At " + totalGenerations + " gens");
@@ -450,13 +452,13 @@ public class 新杂交 {
 
         if (totalGenerations == 100) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
-//            System.out.println("best case: "+bestIndividual.printContent());
+
 //            System.out.println(initialPopulation[0].printContent());
             return;
         }
 
         OperatorNode[] population;
-        if (initialPopulation == null) population = initiatePopulation(size, depth);
+        if (initialPopulation == null) population = initiatePopulation(size);
         else population = initialPopulation;
 
         if (evaluateFitness(population, set)) {
@@ -466,7 +468,7 @@ public class 新杂交 {
 
             OperatorNode[] breed = reproduction(population, size);
             ++this.totalGenerations;
-            geneticAlgorithm(size, depth, set, breed);
+            geneticAlgorithm(size, set, breed);
         }
     }
 
@@ -477,24 +479,19 @@ public class 新杂交 {
 
 
     public static void main(String[] args) throws ScriptException {
-        新杂交 gp = new 新杂交();
+        新杂交_用随机映射 gp = new 新杂交_用随机映射();
 
 
         int[] example = {0, 0, 4};
 
-//            String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
-
-
-//
-//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
-
+        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 //        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
 
 //        String formula = "x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x - x*x*x*x*x+x*x*x*x+x*x*x+x*x + x";//x^8+x^7+x^6-x^5+x^4 + x^3 + x^2 + x
 //
 //        String formula = "x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^7+x^6+x^5+x^4 + x^3 + x^2 + x
-        String formula = "2*x*x*x*x*x*x*x+x*x*x*x*x*x-5*x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//2x^7+x^6-5x^5+x^4 + x^3 + x^2 + x
+//        String formula = "2*x*x*x*x*x*x*x+x*x*x*x*x*x-5*x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//2x^7+x^6-5x^5+x^4 + x^3 + x^2 + x
 
 //        String formula = "x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^6+x^5+x^4 + x^3 + x^2 + x
 
@@ -502,33 +499,31 @@ public class 新杂交 {
 //        String formula = "(5*x*x*x*x*x)-(x*x*x*x)+(6*x*x*x)+(x*x)-(x)";//5x^5*-x^4 + 6x^3 + x^2 - x
 
 //        String formula = "x*x*x*x+x*x*x+x*x+x";//x^4 + x^3 + x^2 + x
-//        String formula = "15*x*x*x*x+20*x*x*x-120*x*x+200*x";//15x^4 + 20x^3 -120x^2 + 200x
-
 //        String formula = "x*x*x+x*x+x";//x^3 + x^2 + x
 //        String formula = "(x*x*x)+(x*x*2)+5*x";//x^3 + 2x^2 + 5x
 //        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
 
         // 控制 目标公式，入参数量，参数区间
-        gp.initializeSolution(formula, 20, -50.0, 50.0);
+        gp.initializeSolution(formula, 10, -50.0, 50.0);
 
         long totalStartTime = System.currentTimeMillis();
 
 
 //        for (int i = 0; i < 10; i++) {
 //        }
-//              gp.evaluateChaoticFactors(10000, 3, 10,4, example);
+//        gp.evaluateChaoticFactors(10000, 3, 10,4, example);
 
         ArrayList<Long> timeList = new ArrayList();
         ArrayList<Integer> generationList = new ArrayList();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 20, -50.0, 50.0);
-            gp.evaluateChaoticFactors(5000, 10, 5, 3, example);
+            gp.initializeSolution(formula, 10, -50.0, 50.0);
+            gp.evaluateChaoticFactors(20000, 1, 10, 10, example);
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, example, null);
+            gp.geneticAlgorithm(200, example, null);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));
@@ -568,10 +563,4 @@ public class 新杂交 {
     }
 
 
-// TODO: 2021/12/18  重写杂交方法！ DONE
-
-    // TODO: 2021/12/21  让 initializeSolution 随机不重复 DONE
-
-
-//// TODO: 2021/12/22 cubic映射: xn+1＝f(xn)＝axn3+(1-a)xn  ,其中xn∈(-1,+1)是状态值，a是控制参数。当a∈(3.3,4]，cubic映射处于混沌状态。
 }

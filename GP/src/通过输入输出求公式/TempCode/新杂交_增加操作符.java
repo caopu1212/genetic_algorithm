@@ -1,4 +1,4 @@
-package src.通过输入输出求公式.gp;
+package src.通过输入输出求公式.TempCode;
 
 import src.通过输入输出求公式.tree.*;
 
@@ -30,7 +30,7 @@ public class 新杂交_增加操作符 {
     public static OperatorNode bestIndividual;
 
 
-    public void evaluateChaoticFactors(int amountOfChaosMapping, int amountOfTree, int amountOfChaosFactor, int sizeOfTree, int[] set) {
+    public void evaluateChaoticFactors(int amountOfChaosMapping, int amountOfTree, int amountOfChaosFactor, int sizeOfTree) {
         double μ = 4;
         ArrayList mappingList = new ArrayList();
         ArrayList mappingList_ = new ArrayList();
@@ -81,7 +81,7 @@ public class 新杂交_增加操作符 {
             for (int i = 0; i < amountOfTree; i++) {
                 OperatorNode chaoticPopulation = chaotic.generateTree(0, sizeOfTree, probabilityList);
 
-                chaotic.evaluateFitnessChaotic(chaoticPopulation, set);
+                chaotic.evaluateFitnessChaotic(chaoticPopulation);
 
 
 //                System.out.println(chaoticPopulation.printContent());
@@ -245,7 +245,7 @@ public class 新杂交_增加操作符 {
         }
     }
 
-    private Double evaluate(OperatorNode clone, int solutions[]) {
+    private Double evaluate(OperatorNode clone) {
         Double evaluation = 0.0;
         Double totalInput = Double.valueOf(inputValue.size());
         for (Map.Entry<Double, Double> input : inputValue.entrySet()) {
@@ -350,21 +350,20 @@ public class 新杂交_增加操作符 {
      * 计算fitness
      *
      * @param population
-     * @param set
      * @return
      */
-    public void evaluateFitnessChaotic(OperatorNode population, int[] set) {
+    public void evaluateFitnessChaotic(OperatorNode population) {
         OperatorNode clone = population.cloneTree();
-        Double result = evaluate(clone, set);
+        Double result = evaluate(clone);
         population.setFitness(Math.abs(result));
     }
 
 
-    public boolean evaluateFitness(OperatorNode[] population, int[] set) {
+    public boolean evaluateFitness(OperatorNode[] population) {
         boolean sequenceFound = false;
         for (int i = 0; i < population.length; i++) {
             OperatorNode clone = population[i].cloneTree();
-            Double result = evaluate(clone, set);
+            Double result = evaluate(clone);
             if (result == 0) {
                 sequenceFound = true;
                 System.out.println("Content of tree (in reverse order): " + population[i].printContent());
@@ -472,7 +471,7 @@ public class 新杂交_增加操作符 {
         return breed;
     }
 
-    private void geneticAlgorithm(int size, int depth, int[] set, OperatorNode[] initialPopulation) {
+    private void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation) {
 
         if (totalGenerations % 50 == 0) {
             System.out.println("At " + totalGenerations + " gens");
@@ -491,14 +490,14 @@ public class 新杂交_增加操作符 {
         if (initialPopulation == null) population = initiatePopulation(size, depth);
         else population = initialPopulation;
 
-        if (evaluateFitness(population, set)) {
+        if (evaluateFitness(population)) {
             return;
         } else {
 
 
             OperatorNode[] breed = reproduction(population, size);
             ++this.totalGenerations;
-            geneticAlgorithm(size, depth, set, breed);
+            geneticAlgorithm(size, depth, breed);
         }
     }
 
@@ -511,13 +510,8 @@ public class 新杂交_增加操作符 {
     public static void main(String[] args) throws ScriptException {
         新杂交_增加操作符 gp = new 新杂交_增加操作符();
 
-
-        int[] example = {0, 0, 4};
-
 //            String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 
-
-//
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
 //        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
@@ -557,10 +551,10 @@ public class 新杂交_增加操作符 {
             inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution(formula, 20, -50.0, 50.0);
-            gp.evaluateChaoticFactors(10000, 5, 10, 3, example);
+            gp.evaluateChaoticFactors(10000, 5, 10, 3);
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, example, null);
+            gp.geneticAlgorithm(200, 3, null);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));

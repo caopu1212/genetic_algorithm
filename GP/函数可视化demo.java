@@ -12,7 +12,7 @@ public class 函数可视化demo {
         XYSeries series = new XYSeries("xySeries");
 
         for (int x = -100; x < 100; x++) {
-            int y = x*x*x*x+x*x*x+x*x+x;
+            int y = x*x+x*x*x-6*x;
             series.add(x, y);
         }
         XYSeriesCollection dataset = new XYSeriesCollection();
@@ -21,7 +21,7 @@ public class 函数可视化demo {
         JFreeChart chart = ChartFactory.createXYLineChart(
                 "fucntion", // chart title
                 "x", // x axis label
-                "x^2", // y axis label
+                "y", // y axis label
                 dataset, // data
                 PlotOrientation.VERTICAL,
                 false, // include legend

@@ -1,5 +1,7 @@
 package src.通过输入输出求公式.tree;
 
+
+@NodeImpl(order = 2)
 public class MultNode extends Node {
   public MultNode(OperatorNode left, OperatorNode right) {
     super(0.0, left, right, "*");

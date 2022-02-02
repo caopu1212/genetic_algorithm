@@ -1,4 +1,4 @@
-package src.通过输入输出求公式.gp;
+package src.通过输入输出求公式.TempCode;
 
 import src.通过输入输出求公式.tree.*;
 
@@ -11,19 +11,13 @@ import java.util.*;
  * Given a function p(x), find h(x) such as p(x) = h(x) for x in [-1,1].
  * Will only test for x = 0, x = 1, x = -1.
  * <p>
- * 对于p(x), 通过给定一定范围内一定数量x的结果， 来找符合的公式。
+ * 通过入参拟合多项式
  * 树结构：
  * 操作符：+，-，*
  * 变量：x
  */
 
-/**
- *
- *
- */
-
-
-public class 新杂交_Sine映射 {
+public class 新杂交 {
     private int totalGenerations = 1;
     private Random random = new Random();
     public static ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
@@ -45,11 +39,12 @@ public class 新杂交_Sine映射 {
             Random random = new Random();
             double x = random.nextDouble();
             for (int i = 0; i < 1000; i++) {
-                x = Math.abs(Math.sin(Math.PI*x));
+                x = x * μ * (1 - x);
                 subList.add(x);
             }
             mappingList.add(subList);
         }
+
         ArrayList weightForOperatorList = new ArrayList();
 
         Double count = 0.0;
@@ -72,7 +67,7 @@ public class 新杂交_Sine映射 {
             weightForOperatorList.add(probabilityList);
         }
 
-        新杂交_Sine映射 chaotic = new 新杂交_Sine映射();
+        新杂交 chaotic = new 新杂交();
         ArrayList chaoticList = weightForOperatorList;
         HashMap<ArrayList, ArrayList> chaoticMap = new HashMap<>();
         count = 0.0;
@@ -111,7 +106,7 @@ public class 新杂交_Sine映射 {
             Double average = chaotic.calculateAverageFitness(chaoticPopulationList);
 //            System.out.println("average = " + average);
             totalAverage = totalAverage + average;
-            System.out.println(totalAverage);
+//            System.out.println(totalAverage);
 
 
             int size = amountOfChaosFactor;
@@ -235,16 +230,14 @@ public class 新杂交_Sine映射 {
             //将树的变量替换为目标输入
             parse(clone, input.getKey());
             //方案一：每对一个 总数-1
-//
-
 //            if (clone.operate() == input.getValue()) {
 //                totalInput = totalInput - 1;
 //           }
 //            //方案二; 当前input - 目标结果的绝对值，相加，
-            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
+//            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
 
-            //方案三; 最小二乘
-//            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(),2);
+//            方案三; 最小二乘
+            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(),2);
         }
 
 //        evaluation = totalInput;
@@ -378,9 +371,9 @@ public class 新杂交_Sine映射 {
             //保留1位小数
 //             randomNum = String.valueOf(String.format("%.1f", random.nextDouble() * (scopeEnd - scopeStart) + scopeStart));
             //保留整数
-
 //            randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
 //            randomNum = randomNum.substring(0, randomNum.lastIndexOf(".")) + ".0";
+
             //保证不出现重复入参
             while (true) {
                 randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
@@ -441,7 +434,7 @@ public class 新杂交_Sine映射 {
             individuals[0] = tournamentSelection(population);
             individuals[1] = tournamentSelection(population);
 
-            breed[filled++] = crossOver(individuals[0], individuals[1], 5);
+            breed[filled++] = crossOver(individuals[0], individuals[1], 50);
         }
 
         return breed;
@@ -457,7 +450,7 @@ public class 新杂交_Sine映射 {
 
         if (totalGenerations == 100) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
-
+//            System.out.println("best case: "+bestIndividual.printContent());
 //            System.out.println(initialPopulation[0].printContent());
             return;
         }
@@ -484,7 +477,7 @@ public class 新杂交_Sine映射 {
 
 
     public static void main(String[] args) throws ScriptException {
-        新杂交_Sine映射 gp = new 新杂交_Sine映射();
+        新杂交 gp = new 新杂交();
 
 
         int[] example = {0, 0, 4};
@@ -516,23 +509,23 @@ public class 新杂交_Sine映射 {
 //        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
 
         // 控制 目标公式，入参数量，参数区间
-        gp.initializeSolution(formula, 10, -50.0, 50.0);
+        gp.initializeSolution(formula, 20, -50.0, 50.0);
 
         long totalStartTime = System.currentTimeMillis();
 
 
 //        for (int i = 0; i < 10; i++) {
 //        }
-//        gp.evaluateChaoticFactors(10000, 3, 10,4, example);
+//              gp.evaluateChaoticFactors(10000, 3, 10,4, example);
 
         ArrayList<Long> timeList = new ArrayList();
         ArrayList<Integer> generationList = new ArrayList();
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 10, -50.0, 50.0);
-            gp.evaluateChaoticFactors(20000, 1, 5, 8, example);
+            gp.initializeSolution(formula, 20, -50.0, 50.0);
+            gp.evaluateChaoticFactors(5000, 10, 5, 3, example);
 
             long startTime = System.currentTimeMillis();
             gp.geneticAlgorithm(200, 3, example, null);
@@ -573,13 +566,12 @@ public class 新杂交_Sine映射 {
 
 //        System.out.println("chaos factors is ：" + betterChaoticMapping);
     }
+
+
 // TODO: 2021/12/18  重写杂交方法！ DONE
 
     // TODO: 2021/12/21  让 initializeSolution 随机不重复 DONE
 
 
 //// TODO: 2021/12/22 cubic映射: xn+1＝f(xn)＝axn3+(1-a)xn  ,其中xn∈(-1,+1)是状态值，a是控制参数。当a∈(3.3,4]，cubic映射处于混沌状态。
-
-// TODO: 2022/1/21 多入参（多维）
-
 }
