@@ -3,9 +3,14 @@ package src.通过输入输出求公式.gp;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 
-public class LogisticMapping extends BaseGenetic {
+public class LogisticMapping extends BaseGenetic_多维数据集 {
     public static void main(String[] args) throws ScriptException {
         LogisticMapping gp = new LogisticMapping();
+                String formula = "10000*x";
+
+
+
+
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
@@ -16,7 +21,7 @@ public class LogisticMapping extends BaseGenetic {
 //        String formula = "x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 //        String formula = "2*x*x*x*x*x*x*x+x*x*x*x*x*x-5*x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//2x^7+x^6-5x^5+x^4 + x^3 + x^2 + x
 
-        String formula = "x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^6+x^5+x^4 + x^3 + x^2 + x
+//        String formula = "x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^6+x^5+x^4 + x^3 + x^2 + x
 
 //        String formula = "x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^5+x^4 + x^3 + x^2 + x
 //        String formula = "(5*x*x*x*x*x)-(x*x*x*x)+(6*x*x*x)+(x*x)-(x)";//5x^5*-x^4 + 6x^3 + x^2 - x
@@ -30,19 +35,19 @@ public class LogisticMapping extends BaseGenetic {
 
 //        String formula = "x*x+x*x*x-6*x";
 
-
         // 控制 目标公式，入参数量，参数区间
-        gp.initializeSolution(formula, 20, -50.0, 50.0);
+        gp.initializeSolution();
 
         long totalStartTime = System.currentTimeMillis();
 
         ArrayList<Long> timeList = new ArrayList();
         ArrayList<Integer> generationList = new ArrayList();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 20, -50.0, 50.0);
+            gp.initializeSolution();
+
             gp.evaluateChaoticFactors(500, 5, 5, 3);
 
             long startTime = System.currentTimeMillis();

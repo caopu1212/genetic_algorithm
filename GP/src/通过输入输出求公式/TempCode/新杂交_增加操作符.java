@@ -163,9 +163,9 @@ public class 新杂交_增加操作符 {
                 //轮盘赌,按权重选择操作符
                 for (int j = 0; j < cumulativeProbability.size(); j++) {
                     if (value < cumulativeProbability.get(0)) {
-                        return new SumNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
+                        return new AddNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
                     } else if (value < cumulativeProbability.get(1)) {
-                        return new SubNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
+                        return new MinNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
                     } else if (value < cumulativeProbability.get(2)) {
                         return new MultNode(generateRecursiveTree(cap, depth, cumulativeProbability), generateRecursiveTree(cap, depth, cumulativeProbability));
                     } else if (value < cumulativeProbability.get(3)) {
@@ -194,9 +194,9 @@ public class 新杂交_增加操作符 {
             Double value = random.nextDouble();
             for (int j = 0; j < cumulativeProbability.size(); j++) {
                 if (value < cumulativeProbability.get(0)) {
-                    return new SumNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
+                    return new AddNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
                 } else if (value < cumulativeProbability.get(1)) {
-                    return new SubNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
+                    return new MinNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
                 } else if (value < cumulativeProbability.get(2)) {
                     return new MultNode(generateRecursiveTree(cap, depth - 1, cumulativeProbability), generateRecursiveTree(cap, depth - 1, cumulativeProbability));
                 } else if (value < cumulativeProbability.get(3)) {

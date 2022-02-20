@@ -12,9 +12,9 @@ public class 传统GP_demo extends BaseGenetic {
         int value = random.nextInt(3);
 
         if (value == 0) {
-            return new SumNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
+            return new AddNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
         } else if (value == 1) {
-            return new SubNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
+            return new MinNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
         } else if (value == 2) {
             return new MultNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
         } else {
@@ -29,9 +29,9 @@ public class 传统GP_demo extends BaseGenetic {
         int value = random.nextInt(8);
 
         if (value == 0) {
-            return new SumNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
+            return new AddNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
         } else if (value == 1) {
-            return new SubNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
+            return new MinNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
         } else if (value == 2) {
             return new MultNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
         } else if (value == 3) {
@@ -115,7 +115,7 @@ public class 传统GP_demo extends BaseGenetic {
         for (int i = 0; i < 5; i++) {
             inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 10, -50.0, 50.0);
+            gp.initializeSolution(formula, 10, -1.0, 1.0);
 
             long startTime = System.currentTimeMillis();
             gp.geneticAlgorithm(200, 3, null,50);

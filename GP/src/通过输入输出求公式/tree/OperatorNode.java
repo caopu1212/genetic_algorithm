@@ -16,6 +16,9 @@ public interface OperatorNode {
   public Double getFitness();
   public void setNormalizedFitness(double normFitness);
   public double getNormalizedFitness();
+  public int getMark();
+  public void setMark(int mark);
+
 
 
 }

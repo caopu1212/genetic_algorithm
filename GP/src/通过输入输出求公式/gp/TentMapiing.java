@@ -43,7 +43,7 @@ public class TentMapiing extends BaseGenetic {
 //        String formula = "x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x - x*x*x*x*x+x*x*x*x+x*x*x+x*x + x";//x^8+x^7+x^6-x^5+x^4 + x^3 + x^2 + x
 //
 //        String formula = "x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^7+x^6+x^5+x^4 + x^3 + x^2 + x
-        String formula = "2*x*x*x*x*x*x*x+x*x*x*x*x*x-5*x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//2x^7+x^6-5x^5+x^4 + x^3 + x^2 + x
+//        String formula = "2*x*x*x*x*x*x*x+x*x*x*x*x*x-5*x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//2x^7+x^6-5x^5+x^4 + x^3 + x^2 + x
 
 //        String formula = "x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^6+x^5+x^4 + x^3 + x^2 + x
 
@@ -56,9 +56,10 @@ public class TentMapiing extends BaseGenetic {
 //        String formula = "x*x*x+x*x+x";//x^3 + x^2 + x
 //        String formula = "(x*x*x)+(x*x*2)+5*x";//x^3 + 2x^2 + 5x
 //        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
+        String formula = "x+x+x";
 
         // 控制 目标公式，入参数量，参数区间
-        gp.initializeSolution(formula, 10, -50.0, 50.0);
+        gp.initializeSolution(formula, 10, -1.0, 1.0);
 
         long totalStartTime = System.currentTimeMillis();
 
@@ -73,8 +74,8 @@ public class TentMapiing extends BaseGenetic {
         for (int i = 0; i < 20; i++) {
             inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 10, -50.0, 50.0);
-            gp.evaluateChaoticFactors(10000, 1, 10 ,8);
+            gp.initializeSolution(formula, 10, -1.0, 1.0);
+            gp.evaluateChaoticFactors(3000, 3, 5, 4);
 
             long startTime = System.currentTimeMillis();
             gp.geneticAlgorithm(1000,3, null,50);

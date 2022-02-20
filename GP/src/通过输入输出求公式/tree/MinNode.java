@@ -1,7 +1,7 @@
 package src.通过输入输出求公式.tree;
 @NodeImpl(order = 1)
-public class SubNode extends Node {
-  public SubNode(OperatorNode left, OperatorNode right) {
+public class MinNode extends Node {
+  public MinNode(OperatorNode left, OperatorNode right) {
     super(0.0, left, right, "-");
   }
   
@@ -14,6 +14,6 @@ public class SubNode extends Node {
   }
   
   public OperatorNode cloneTree() {
-    return new SubNode(this.getLeft().cloneTree(), this.getRight().cloneTree());
+    return new MinNode(this.getLeft().cloneTree(), this.getRight().cloneTree());
   }
 }

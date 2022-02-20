@@ -1,7 +1,7 @@
 package src.通过输入输出求公式.tree;
 @NodeImpl(order = 0)
-public class SumNode extends Node {
-  public SumNode(OperatorNode left, OperatorNode right) {
+public class AddNode extends Node {
+  public AddNode(OperatorNode left, OperatorNode right) {
     super(0.0, left, right, "+");
   }
   
@@ -14,6 +14,10 @@ public class SumNode extends Node {
   }
   
   public OperatorNode cloneTree() {
-    return new SumNode(this.getLeft().cloneTree(), this.getRight().cloneTree());
+    return new AddNode(this.getLeft().cloneTree(), this.getRight().cloneTree());
   }
+
+
+
+
 }

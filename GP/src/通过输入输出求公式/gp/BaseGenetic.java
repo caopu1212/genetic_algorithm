@@ -10,8 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
- * Given a function p(x), find h(x) such as p(x) = h(x) for x in [-1,1].
- * Will only test for x = 0, x = 1, x = -1.
  * <p>
  * 通过入参拟合多项式
  * 树结构：
@@ -104,6 +102,7 @@ public class BaseGenetic {
 //                System.out.println("result = " + chaoticPopulation.operate());
 //                System.out.println("fitness = " + chaoticPopulation.getFitness());
 
+
                 chaoticPopulationList.add(chaoticPopulation);
             }
             chaoticMap.put(probabilityList, chaoticPopulationList);
@@ -111,7 +110,6 @@ public class BaseGenetic {
 
         // 算平均fitness,保存最好的n个到全局变量
         Iterator iter = chaoticMap.keySet().iterator();
-        Double bestFitness = 100000000000000.;
         ArrayList<Double> bestFitessList = new ArrayList();
         Double totalAverage = 0.0;
         while (iter.hasNext()) {
@@ -185,9 +183,9 @@ public class BaseGenetic {
         //轮盘赌,按权重选择操作符
 //                for (int j = 0; j < cumulativeProbability.size(); j++) {
 //                    if (value < cumulativeProbability.get(0)) {
-//                        return new SumNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
+//                        return new  Node(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
 //                    } else if (value < cumulativeProbability.get(1)) {
-//                        return new SubNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
+//                        return new MinNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
 //                    } else if (value < cumulativeProbability.get(2)) {
 //                        return new MultNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
 //                    } else if (value < cumulativeProbability.get(3)) {
@@ -243,9 +241,9 @@ public class BaseGenetic {
 
 
 //        if (value < cumulativeProbability.get(0)) {
-//            return new SumNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
+//            return new AddNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
 //        } else if (value < cumulativeProbability.get(1)) {
-//            return new SubNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
+//            return new MinNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
 //        } else if (value < cumulativeProbability.get(2)) {
 //            return new MultNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
 //        } else if (value < cumulativeProbability.get(3)) {
@@ -261,14 +259,11 @@ public class BaseGenetic {
      * @param replacement
      */
     public void parse(OperatorNode root, Double replacement) {
-
-
         boolean leftIsTermial = root.getLeft().isTerminal();
         boolean rightIsTermial = false;
         if (root.getRight() != null) {
             rightIsTermial = root.getRight().isTerminal();
         }
-
         if (leftIsTermial && rightIsTermial) {
             root.setLeft(new TerminalX1(replacement));
             root.setRight(new TerminalX1(replacement));
@@ -295,7 +290,7 @@ public class BaseGenetic {
         Double totalInput = Double.valueOf(inputValue.size());
         for (Map.Entry<Double, Double> input : inputValue.entrySet()) {
             //将树的变量替换为目标输入
-            parse(clone, input.getKey());
+            parse(clone, input.getValue());
             //方案一：每对一个 总数-1
 //            if (clone.operate() == input.getValue()) {
 //                totalInput = totalInput - 1;
@@ -304,7 +299,7 @@ public class BaseGenetic {
 //            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
 
 //            方案三; 最小二乘
-            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(), 2);
+            evaluation = evaluation + Math.pow(clone.operate() - input.getKey(), 2);
         }
 
 //        evaluation = totalInput;
@@ -450,8 +445,7 @@ public class BaseGenetic {
 
             //保证不出现重复入参
             while (true) {
-                randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
-                randomNum = randomNum.substring(0, randomNum.lastIndexOf(".")) + ".0";
+                randomNum = String.valueOf(String.format("%.2f", random.nextDouble() * (scopeEnd - scopeStart) + scopeStart));
                 if (!randomNumberList.contains(randomNum)) {
                     randomNumberList.add(randomNum);
                     break;
@@ -525,6 +519,7 @@ public class BaseGenetic {
         if (totalGenerations == 100) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
 //            System.out.println("best case: "+bestIndividual.printContent());
+
 //            System.out.println(initialPopulation[0].printContent());
             return;
         }
@@ -548,4 +543,10 @@ public class BaseGenetic {
     }
 
 
+/**
+     * test
+     */
+
+    // TODO: 2022/2/15  改成多维的
+    // TODO: 2022/2/16  优化计算fitness的方法，用空间换时间计算多维多项式 
 }

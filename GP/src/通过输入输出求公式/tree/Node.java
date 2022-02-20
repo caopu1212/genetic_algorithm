@@ -8,7 +8,6 @@ import org.reflections.util.ConfigurationBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -18,6 +17,7 @@ public abstract class Node implements OperatorNode {
     protected String rep;
     private Double fitness;
     private double normalizedFitness;
+    private int mark;
 
     public static List<Class<? extends Node>> getNodeClassList() {
 //      Reflections f = new Reflections("src.通过输入输出求公式.tree",new TypeAnnotationsScanner());
@@ -28,8 +28,6 @@ public abstract class Node implements OperatorNode {
                                 new SubTypesScanner(false)
                         )
                         .setUrls(ClasspathHelper.forPackage("src.通过输入输出求公式.tree")));
-
-
         Set<Class<?>> types = f.getTypesAnnotatedWith(NodeImpl.class);
         List<Class<? extends Node>> result = new ArrayList<>();
         for (int i = 0; i < types.size(); i++) {
@@ -48,6 +46,7 @@ public abstract class Node implements OperatorNode {
         return result;
     }
 
+
     public Node(Double terminal, OperatorNode left, OperatorNode right, String rep) {
         this.number = terminal;
         this.left = left;
@@ -65,6 +64,15 @@ public abstract class Node implements OperatorNode {
     public boolean isFunction() {
         return false;
     }
+
+    public int getMark() {
+        return mark;
+    }
+
+    public void setMark(int mark) {
+        this.mark = mark;
+    }
+
 
     public OperatorNode getLeft() {
         return left;

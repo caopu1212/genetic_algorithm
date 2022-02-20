@@ -24,7 +24,7 @@ public class RandomMapping extends BaseGenetic {
         RandomMapping gp = new RandomMapping();
 
 
-        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 //        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
 
@@ -41,7 +41,7 @@ public class RandomMapping extends BaseGenetic {
 //        String formula = "x*x*x*x+x*x*x+x*x+x";//x^4 + x^3 + x^2 + x
 //        String formula = "x*x*x+x*x+x";//x^3 + x^2 + x
 //        String formula = "(x*x*x)+(x*x*2)+5*x";//x^3 + 2x^2 + 5x
-//        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
+        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
 
         // 控制 目标公式，入参数量，参数区间
         gp.initializeSolution(formula, 10, -50.0, 50.0);
@@ -51,11 +51,11 @@ public class RandomMapping extends BaseGenetic {
         ArrayList<Long> timeList = new ArrayList();
         ArrayList<Integer> generationList = new ArrayList();
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 5; i++) {
             inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 10, -50.0, 50.0);
-            gp.evaluateChaoticFactors(20000, 1, 10, 10);
+            gp.initializeSolution(formula, 50, -1.0, 1.0);
+            gp.evaluateChaoticFactors(3000, 3, 5, 4);
 
             long startTime = System.currentTimeMillis();
             gp.geneticAlgorithm(200, 3, null, 50);

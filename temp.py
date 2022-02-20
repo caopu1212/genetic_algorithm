@@ -1,5 +1,6 @@
+import numpy as np
+import random as rd
 
-#
 # def creare_place():
 #     count = 0
 #     list = []
@@ -22,14 +23,10 @@
 #                     [0, 0, 0, 0]])
 # rules = [["0,0 0,1"],["0,1 0,2"],["2,0 2,1"]]
 
-list = [1,2,3]
-a = list[1]
-a = 3
-print(list)
-print(a)
-
-
-
+print(np.zeros((5,3)))
+print(rd.random())
+for i in range(50) :
+    print(rd.random())
 
 
 

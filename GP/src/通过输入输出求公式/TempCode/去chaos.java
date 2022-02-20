@@ -40,9 +40,9 @@ public class 去chaos {
         int value = random.nextInt(3);
 
         if (value == 0) {
-            return new SumNode(generateRecursiveTree(depth), generateRecursiveTree(depth));
+            return new AddNode(generateRecursiveTree(depth), generateRecursiveTree(depth));
         } else if (value == 1) {
-            return new SubNode(generateRecursiveTree(depth), generateRecursiveTree(depth));
+            return new MinNode(generateRecursiveTree(depth), generateRecursiveTree(depth));
         } else {
             return new MultNode(generateRecursiveTree(depth), generateRecursiveTree(depth));
         }
@@ -56,9 +56,9 @@ public class 去chaos {
         int value = random.nextInt(5);
 
         if (value == 1) {
-            return new SumNode(generateRecursiveTree(depth - 1), generateRecursiveTree(depth - 1));
+            return new AddNode(generateRecursiveTree(depth - 1), generateRecursiveTree(depth - 1));
         } else if (value == 2) {
-            return new SubNode(generateRecursiveTree(depth - 1), generateRecursiveTree(depth - 1));
+            return new MinNode(generateRecursiveTree(depth - 1), generateRecursiveTree(depth - 1));
         } else if (value == 3) {
             return new MultNode(generateRecursiveTree(depth - 1), generateRecursiveTree(depth - 1));
         } else {

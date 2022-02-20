@@ -1,18 +1,15 @@
-package src.通过输入输出求公式.TempCode;
+package src.通过输入输出求公式.gp;
 
+import src.通过输入输出求公式.Elements.FileData;
+import src.通过输入输出求公式.tools.fileOperator;
 import src.通过输入输出求公式.tree.Node;
 import src.通过输入输出求公式.tree.OperatorNode;
-import src.通过输入输出求公式.tree.TerminalX1;
+import src.通过输入输出求公式.tree.TerminalX0;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
- * Given a function p(x), find h(x) such as p(x) = h(x) for x in [-1,1].
- * Will only test for x = 0, x = 1, x = -1.
  * <p>
  * 通过入参拟合多项式
  * 树结构：
@@ -20,14 +17,14 @@ import java.util.*;
  * 变量：x
  */
 
-public class BaseGenetic {
+public class BaseGenetic_多维数据集 {
     public int totalGenerations = 1;
     public Random random = new Random();
     public static ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
     //key：x
     //value：结果
-    public static HashMap<Double, Double> inputValue = new HashMap<>();
-
+//    public static HashMap<Double, Double> inputValue = new HashMap<>();
+    public static ArrayList<FileData> inputValue = new ArrayList<>();
     public static Double min = 100000000.0;
 
     public static OperatorNode bestIndividual;
@@ -84,7 +81,7 @@ public class BaseGenetic {
             weightForOperatorList.add(probabilityList);
         }
 
-        BaseGenetic chaotic = new BaseGenetic();
+        BaseGenetic_多维数据集 chaotic = new BaseGenetic_多维数据集();
         ArrayList chaoticList = weightForOperatorList;
         HashMap<ArrayList, ArrayList> chaoticMap = new HashMap<>();
         count = 0.0;
@@ -97,13 +94,14 @@ public class BaseGenetic {
             ArrayList probabilityList = (ArrayList) probabilityList_;
             for (int i = 0; i < amountOfTree; i++) {
                 OperatorNode chaoticPopulation = chaotic.generateTree(sizeOfTree, probabilityList);
-
+                System.out.println(chaoticPopulation.printContent());
                 chaotic.evaluateFitnessChaotic(chaoticPopulation);
 
 
 //                System.out.println(chaoticPopulation.printContent());
 //                System.out.println("result = " + chaoticPopulation.operate());
 //                System.out.println("fitness = " + chaoticPopulation.getFitness());
+
 
                 chaoticPopulationList.add(chaoticPopulation);
             }
@@ -112,7 +110,6 @@ public class BaseGenetic {
 
         // 算平均fitness,保存最好的n个到全局变量
         Iterator iter = chaoticMap.keySet().iterator();
-        Double bestFitness = 100000000000000.;
         ArrayList<Double> bestFitessList = new ArrayList();
         Double totalAverage = 0.0;
         while (iter.hasNext()) {
@@ -149,7 +146,7 @@ public class BaseGenetic {
 
     //Generate base of the tree, avoids generating a single node
     public OperatorNode generateTree(int depth, ArrayList probabilityList) {
-        //将混沌映射三个一组遍历分配给运算符，并进行轮盘赌计算选择概率
+        //将混沌映射n个一组遍历分配给运算符，并进行轮盘赌计算选择概率
 //        for (Object probabilityList_ : chaoticList) {
         ArrayList<Double> tempList = new ArrayList();
         for (int i = 0; i < probabilityList.size(); i++) {
@@ -167,11 +164,7 @@ public class BaseGenetic {
         for (int i = 0; i < tempList.size(); i++) {
             individualProbability.add(tempList.get(i) / total);
         }
-        // 加减乘 sin
-//        individualProbability.add(tempList.get(0) / total);
-//        individualProbability.add(tempList.get(1) / total);
-//        individualProbability.add(tempList.get(2) / total);
-//        individualProbability.add(tempList.get(3) / total);
+
 
         ArrayList<Double> cumulativeProbability = new ArrayList<>();
 
@@ -184,130 +177,127 @@ public class BaseGenetic {
         Double value = random.nextDouble();
 
         //轮盘赌,按权重选择操作符
-//                for (int j = 0; j < cumulativeProbability.size(); j++) {
-//                    if (value < cumulativeProbability.get(0)) {
-//                        return new AddNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
-//                    } else if (value < cumulativeProbability.get(1)) {
-//                        return new MinNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
-//                    } else if (value < cumulativeProbability.get(2)) {
-//                        return new MultNode(generateRecursiveTree(depth, cumulativeProbability), generateRecursiveTree(depth, cumulativeProbability));
-//                    } else if (value < cumulativeProbability.get(3)) {
-//                        return new SinNode(generateRecursiveTree(depth, cumulativeProbability));
-//                    }
-//                }
         return generateNewNode(value, cumulativeProbability, depth);
-
-
-//                tempList = null;
-//        }
-//    }
-//        return null;
     }
 
     //Generate rest of the tree
+
     public OperatorNode generateRecursiveTree(int depth, ArrayList<Double> cumulativeProbability) {
+        //特征数量
+        int featureSize = inputValue.get(0).getFeatures().size();
+
+        int mark = random.nextInt(featureSize);
         if (depth == 0) {
-            return new TerminalX1();
+            return new TerminalX0(mark);
         }
 
-        int valueOfTerminate = random.nextInt(4);
-
-        //有四分之一概率为末节点
+        //   为terminal node的概率为1/4
+        int valueOfTerminate = random.nextInt(3);
         if (valueOfTerminate == 0) {
-            return new TerminalX1();
+            return new TerminalX0(mark);
         } else {
             //轮盘赌 +-* sin
             Double value = random.nextDouble();
-//            for (int j = 0; j < cumulativeProbability.size(); j++) {
             return generateNewNode(value, cumulativeProbability, depth);
-
-
-//            }
         }
-//        return null;
     }
 
     public Node generateNewNode(Double value, ArrayList<Double> cumulativeProbability, int depth) {
         int i;
         for (i = 0; i < cumulativeProbability.size(); i++) {
-            if(value < cumulativeProbability.get(i))
+            if (value < cumulativeProbability.get(i))
                 break;
         }
 
         Constructor con = nodeClassList.get(i).getDeclaredConstructors()[0];
         try {
             OperatorNode leftNode = generateRecursiveTree(depth - 1, cumulativeProbability);
-            return (Node)con.newInstance(con.getParameterCount() > 1 ? Arrays.asList(leftNode, generateRecursiveTree(depth - 1, cumulativeProbability)).toArray() : Arrays.asList(leftNode).toArray());
+            return (Node) con.newInstance(con.getParameterCount() > 1 ? Arrays.asList(leftNode, generateRecursiveTree(depth - 1, cumulativeProbability)).toArray() : Arrays.asList(leftNode).toArray());
         } catch (Exception e) {
             return null;
         }
 
-
-//        if (value < cumulativeProbability.get(0)) {
-//            return new AddNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
-//        } else if (value < cumulativeProbability.get(1)) {
-//            return new MinNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
-//        } else if (value < cumulativeProbability.get(2)) {
-//            return new MultNode(generateRecursiveTree(depth - 1, cumulativeProbability), generateRecursiveTree(depth - 1, cumulativeProbability));
-//        } else if (value < cumulativeProbability.get(3)) {
-//            return new SinNode(generateRecursiveTree(depth - 1, cumulativeProbability));
-//        }
     }
 
     /**
      * 将树的变量替换为目标输入
      *
      * @param root
-     * @param replacement
      */
-    public void parse(OperatorNode root, Double replacement) {
-
-
+    public void parse(OperatorNode root, ArrayList<Double> replacementList) {
         boolean leftIsTermial = root.getLeft().isTerminal();
+
+
         boolean rightIsTermial = false;
         if (root.getRight() != null) {
             rightIsTermial = root.getRight().isTerminal();
         }
-
         if (leftIsTermial && rightIsTermial) {
-            root.setLeft(new TerminalX1(replacement));
-            root.setRight(new TerminalX1(replacement));
+
+            int leftMark = root.getLeft().getMark();
+            double leftMarkReplacement = replacementList.get(leftMark);
+            root.setLeft(new TerminalX0(leftMarkReplacement, leftMark));
+
+            int rightMark = root.getRight().getMark();
+            double rightMarkReplacement = replacementList.get(rightMark);
+            root.setRight(new TerminalX0(rightMarkReplacement, rightMark));
+
         } else if (leftIsTermial && root.getRight() == null) {
-            root.setLeft(new TerminalX1(replacement));
+            int leftMark = root.getLeft().getMark();
+            double leftMarkReplacement = replacementList.get(leftMark);
+            root.setLeft(new TerminalX0(leftMarkReplacement, leftMark));
             root.setRight(null);
         } else if (!leftIsTermial && root.getRight() == null) {
-            parse(root.getLeft(), replacement);
+            parse(root.getLeft(), replacementList);
             root.setRight(null);
         } else if (leftIsTermial && !rightIsTermial) {
-            root.setLeft(new TerminalX1(replacement));
-            parse(root.getRight(), replacement);
+            int leftMark = root.getLeft().getMark();
+            double leftMarkReplacement = replacementList.get(leftMark);
+            root.setLeft(new TerminalX0(leftMarkReplacement, leftMark));
+            parse(root.getRight(), replacementList);
         } else if (rightIsTermial && !leftIsTermial) {
-            root.setRight(new TerminalX1(replacement));
-            parse(root.getLeft(), replacement);
+            int rightMark = root.getRight().getMark();
+            double rightMarkReplacement = replacementList.get(rightMark);
+            root.setRight(new TerminalX0(rightMarkReplacement, rightMark));
+            parse(root.getLeft(), replacementList);
         } else {
-            parse(root.getLeft(), replacement);
-            parse(root.getRight(), replacement);
+            parse(root.getLeft(), replacementList);
+            parse(root.getRight(), replacementList);
         }
     }
 
     public Double evaluate(OperatorNode clone) {
         Double evaluation = 0.0;
         Double totalInput = Double.valueOf(inputValue.size());
-        for (Map.Entry<Double, Double> input : inputValue.entrySet()) {
-            //将树的变量替换为目标输入
-            parse(clone, input.getKey());
-            //方案一：每对一个 总数-1
-//            if (clone.operate() == input.getValue()) {
-//                totalInput = totalInput - 1;
-//           }
-//            //方案二; 当前input - 目标结果的绝对值，相加，
-//            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
+        for (FileData fileData : inputValue) {
+//            int randomIndex = this.random.nextInt(inputValue.size());
 
-//            方案三; 最小二乘
-            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(), 2);
+            //将树的变量替换为目标输入
+            parse(clone, fileData.getFeatures());
+
+
+
+//            最小二乘
+            evaluation = evaluation + Math.pow(clone.operate() - fileData.getIndependentVariable(), 2);
+
         }
 
-//        evaluation = totalInput;
+
+//        for (Map.Entry<Double, Double> input : inputValue.entrySet()) {
+//            //将树的变量替换为目标输入
+//            parse(clone, input.getKey());
+//            //方案一：每对一个 总数-1
+////            if (clone.operate() == input.getValue()) {
+////                totalInput = totalInput - 1;
+////           }
+////            //方案二; 当前input - 目标结果的绝对值，相加，
+////            evaluation = evaluation + Math.abs(clone.operate() - input.getValue());
+//
+////            方案三; 最小二乘
+//            evaluation = evaluation + Math.pow(clone.operate() - input.getValue(), 2);
+//        }
+//
+////        evaluation = totalInput;
 
         return evaluation;
     }
@@ -417,6 +407,7 @@ public class BaseGenetic {
                 min = result;
                 System.out.println("更新最优: " + min);
                 bestIndividual = population[i];
+                System.out.println(population[i].printContent());
             }
 
         }
@@ -428,45 +419,9 @@ public class BaseGenetic {
 
     /**
      * 初始化 验证入参
-     *
-     * @param formula 目标公式
      */
-    public void initializeSolution(String formula, int amountOfValue, Double scopeStart, Double scopeEnd) throws ScriptException {
-        //java6 脚本转化
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("js");
-        ArrayList randomNumberList = new ArrayList();
-
-        for (int i = 0; i < amountOfValue; i++) {
-            String randomNum;
-            //java只能生成0到1之间随机数，因此手动写范围
-            //Math.random() * (Max - Min) + Min
-//             randomNum = String.valueOf(random.nextDouble() * (scopeEnd  - scopeStart)+ scopeStart);
-            //保留1位小数
-//             randomNum = String.valueOf(String.format("%.1f", random.nextDouble() * (scopeEnd - scopeStart) + scopeStart));
-            //保留整数
-//            randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
-//            randomNum = randomNum.substring(0, randomNum.lastIndexOf(".")) + ".0";
-
-            //保证不出现重复入参
-            while (true) {
-                randomNum = String.valueOf(random.nextDouble() * (scopeEnd - scopeStart) + scopeStart);
-                randomNum = randomNum.substring(0, randomNum.lastIndexOf(".")) + ".0";
-                if (!randomNumberList.contains(randomNum)) {
-                    randomNumberList.add(randomNum);
-                    break;
-                }
-            }
-
-
-            //将X 替换为范围内的一个随机参数
-            String newFormula = formula.replace("x", randomNum);
-
-            Object result1 = null;
-            result1 = engine.eval(newFormula);
-            //计算结果存为全局变量
-            inputValue.put(Double.valueOf(randomNum), (Double) result1);
-        }
+    public void initializeSolution() {
+        inputValue = new fileOperator().readFile();
     }
 
     //There must be a population of at least 4 for this to work
@@ -524,7 +479,8 @@ public class BaseGenetic {
 
         if (totalGenerations == 100) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
-//            System.out.println("best case: "+bestIndividual.printContent());
+            System.out.println("best case: "+bestIndividual.printContent());
+
 //            System.out.println(initialPopulation[0].printContent());
             return;
         }
@@ -548,4 +504,10 @@ public class BaseGenetic {
     }
 
 
+/**
+ * test
+ */
+
+    // TODO: 2022/2/15  改成多维的
+    // TODO: 2022/2/16  优化计算fitness的方法，用空间换时间计算多维多项式 
 }
