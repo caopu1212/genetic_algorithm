@@ -5,6 +5,7 @@ import src.通过输入输出求公式.tree.*;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -25,7 +26,7 @@ public class BaseGenetic {
     //value：结果
     public static HashMap<Double, Double> inputValue = new HashMap<>();
 
-    public static Double min = 100000000.0;
+    public static Double min = 1.7976931348623157E308;
 
     public static OperatorNode bestIndividual;
 
@@ -144,7 +145,7 @@ public class BaseGenetic {
     }
 
 
-    //Generate base of the tree, avoids generating a single node
+    //Generate BaseGenetic_GaForPreProcessing of the tree, avoids generating a single node
     public OperatorNode generateTree(int depth, ArrayList probabilityList) {
         //将混沌映射三个一组遍历分配给运算符，并进行轮盘赌计算选择概率
 //        for (Object probabilityList_ : chaoticList) {
@@ -548,5 +549,5 @@ public class BaseGenetic {
      */
 
     // TODO: 2022/2/15  改成多维的
-    // TODO: 2022/2/16  优化计算fitness的方法，用空间换时间计算多维多项式 
+    // TODO: 2022/2/16  优化计算fitness的方法，用空间换时间计算多维多项式
 }

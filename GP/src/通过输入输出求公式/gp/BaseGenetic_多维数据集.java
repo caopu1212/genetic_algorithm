@@ -1,7 +1,7 @@
 package src.通过输入输出求公式.gp;
 
 import src.通过输入输出求公式.Elements.FileData;
-import src.通过输入输出求公式.tools.fileOperator;
+import src.通过输入输出求公式.tools.FileOperator;
 import src.通过输入输出求公式.tree.Node;
 import src.通过输入输出求公式.tree.OperatorNode;
 import src.通过输入输出求公式.tree.TerminalX0;
@@ -17,19 +17,25 @@ import java.util.*;
  * 变量：x
  */
 
-public class BaseGenetic_多维数据集 {
-    public int totalGenerations = 1;
+public class BaseGenetic_多维数据集 extends BaseGenetic {
+    public static int totalGenerations = 1;
     public Random random = new Random();
     public static ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
     //key：x
     //value：结果
 //    public static HashMap<Double, Double> inputValue = new HashMap<>();
     public static ArrayList<FileData> inputValue = new ArrayList<>();
-    public static Double min = 100000000.0;
+    public static Double min = 1.7976931348623157E308;
 
-    public static OperatorNode bestIndividual;
+    public static OperatorNode bestIndividual = null;
 
-    private static List<Class<? extends Node>> nodeClassList = Node.getNodeClassList();
+    public static List<Class<? extends Node>> nodeClassList = Node.getNodeClassList();
+
+
+    public BaseGenetic_多维数据集() {
+        inputValue = new FileOperator().readFile();
+    }
+
 
     /**
      * 获得一维混沌映射
@@ -93,16 +99,12 @@ public class BaseGenetic_多维数据集 {
             ArrayList<OperatorNode> chaoticPopulationList = new ArrayList();
             ArrayList probabilityList = (ArrayList) probabilityList_;
             for (int i = 0; i < amountOfTree; i++) {
-                OperatorNode chaoticPopulation = chaotic.generateTree(sizeOfTree, probabilityList);
-                System.out.println(chaoticPopulation.printContent());
+                OperatorNode chaoticPopulation = chaotic.generateFullTree(sizeOfTree, probabilityList);
+
                 chaotic.evaluateFitnessChaotic(chaoticPopulation);
-
-
 //                System.out.println(chaoticPopulation.printContent());
 //                System.out.println("result = " + chaoticPopulation.operate());
 //                System.out.println("fitness = " + chaoticPopulation.getFitness());
-
-
                 chaoticPopulationList.add(chaoticPopulation);
             }
             chaoticMap.put(probabilityList, chaoticPopulationList);
@@ -133,6 +135,8 @@ public class BaseGenetic_多维数据集 {
                         //替換相應位置元素
                         bestFitessList.set(i, average);
                         betterChaoticMapping.set(i, (ArrayList<Double>) key);
+
+//                        System.out.println("fitness for preprocessing = "+ average);
                         break;
                     }
                 }
@@ -143,8 +147,88 @@ public class BaseGenetic_多维数据集 {
         System.out.println("bestFitessList : " + bestFitessList);
     }
 
+    /**
+     * 全生成 树
+     *
+     * @param depth
+     * @param probabilityList
+     * @return
+     */
+    public OperatorNode generateFullTree(int depth, ArrayList probabilityList) {
+        //将混沌映射n个一组遍历分配给运算符，并进行轮盘赌计算选择概率
+//        for (Object probabilityList_ : chaoticList) {
+        ArrayList<Double> tempList = new ArrayList();
+        for (int i = 0; i < probabilityList.size(); i++) {
+//            tempList.add((Double) probabilityList.get(random.nextInt(probabilityList.size())));
+            tempList.add((Double) probabilityList.get(i));
+//            if (tempList.size() == 4) {
+//                break;
+//            }
+        }
+//                Double total = tempList.get(0) + tempList.get(1) + tempList.get(2) + tempList.get(3);
+        Double total = tempList.stream().mapToDouble(a -> a).sum();
+        //累计概率
+        Double cumulativeCount = 0.0;
+        ArrayList<Double> individualProbability = new ArrayList();
+        for (int i = 0; i < tempList.size(); i++) {
+            individualProbability.add(tempList.get(i) / total);
+        }
 
-    //Generate base of the tree, avoids generating a single node
+
+        ArrayList<Double> cumulativeProbability = new ArrayList<>();
+
+
+        //添加累计概率list
+        for (int j = 0; j < individualProbability.size(); j++) {
+            cumulativeCount = cumulativeCount + individualProbability.get(j);
+            cumulativeProbability.add(cumulativeCount);
+        }
+        Double value = random.nextDouble();
+
+        //轮盘赌,按权重选择操作符
+        return generateFullNewNode(value, cumulativeProbability, depth);
+    }
+
+    /**
+     * 全生成 树
+     */
+    public OperatorNode generateFullRecursiveTree(int depth, ArrayList<Double> cumulativeProbability) {
+        //特征数量
+        int featureSize = inputValue.get(0).getFeatures().size();
+
+        int mark = random.nextInt(featureSize);
+        if (depth == 0) {
+            return new TerminalX0(mark);
+        }
+
+        //   全生成 只有到最后才放入terminal node
+        //轮盘赌
+        Double value = random.nextDouble();
+        return generateFullNewNode(value, cumulativeProbability, depth);
+    }
+
+    /**
+     * 全生成 树
+     */
+    public Node generateFullNewNode(Double value, ArrayList<Double> cumulativeProbability, int depth) {
+        int i;
+        for (i = 0; i < cumulativeProbability.size(); i++) {
+            if (value < cumulativeProbability.get(i))
+                break;
+        }
+
+        Constructor con = nodeClassList.get(i).getDeclaredConstructors()[0];
+        try {
+            OperatorNode leftNode = generateFullRecursiveTree(depth - 1, cumulativeProbability);
+
+            return (Node) con.newInstance(con.getParameterCount() > 1 ? Arrays.asList(leftNode, generateFullRecursiveTree(depth - 1, cumulativeProbability)).toArray() : Arrays.asList(leftNode).toArray());
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    //Generate BaseGenetic_GaForPreProcessing of the tree, avoids generating a single node
     public OperatorNode generateTree(int depth, ArrayList probabilityList) {
         //将混沌映射n个一组遍历分配给运算符，并进行轮盘赌计算选择概率
 //        for (Object probabilityList_ : chaoticList) {
@@ -191,8 +275,8 @@ public class BaseGenetic_多维数据集 {
             return new TerminalX0(mark);
         }
 
-        //   为terminal node的概率为1/4
-        int valueOfTerminate = random.nextInt(3);
+        //   为terminal node的概率为1/6
+        int valueOfTerminate = random.nextInt(5);
         if (valueOfTerminate == 0) {
             return new TerminalX0(mark);
         } else {
@@ -276,9 +360,12 @@ public class BaseGenetic_多维数据集 {
             parse(clone, fileData.getFeatures());
 
 
-
 //            最小二乘
-            evaluation = evaluation + Math.pow(clone.operate() - fileData.getIndependentVariable(), 2);
+//            evaluation = evaluation + Math.pow(clone.operate() - fileData.getIndependentVariable(), 2);
+//            System.out.println(clone.operate());
+//            System.out.println(clone.printContent());
+            evaluation = evaluation + Math.pow(fileData.getIndependentVariable() - clone.operate(), 2);
+//            System.out.println(evaluation);
 
         }
 
@@ -303,8 +390,6 @@ public class BaseGenetic_多维数据集 {
     }
 
     public OperatorNode pickStop(OperatorNode root) {
-
-
         if (root.isTerminal()) {
             return root;
         }
@@ -354,7 +439,7 @@ public class BaseGenetic_多维数据集 {
         OperatorNode[] population = new Node[size];
 
         for (int i = 0; i < size; i++) {
-            population[i] = generateTree(depth, betterChaoticMapping.get(random.nextInt(betterChaoticMapping.size())));
+            population[i] = generateTree(depth, BaseGenetic_多维数据集.betterChaoticMapping.get(random.nextInt(BaseGenetic_多维数据集.  betterChaoticMapping.size())));
             System.out.println("new population: " + population[i].printContent());
         }
 
@@ -399,7 +484,9 @@ public class BaseGenetic_多维数据集 {
             Double result = evaluate(clone);
             if (result == 0) {
                 sequenceFound = true;
-                System.out.println("Content of tree (in reverse order): " + population[i].printContent());
+                System.out.println("find best case(in reverse order): " + bestIndividual.printContent());
+                System.out.println("r^2 = " + calculateRSquare(min));
+
             }
 
             population[i].setFitness(Math.abs(result));
@@ -407,7 +494,9 @@ public class BaseGenetic_多维数据集 {
                 min = result;
                 System.out.println("更新最优: " + min);
                 bestIndividual = population[i];
-                System.out.println(population[i].printContent());
+//                System.out.println(population[i].printContent());
+//                System.out.println("r^2 = " + calculateRSquare(min));
+                System.out.println(totalGenerations + " 代");
             }
 
         }
@@ -421,8 +510,9 @@ public class BaseGenetic_多维数据集 {
      * 初始化 验证入参
      */
     public void initializeSolution() {
-        inputValue = new fileOperator().readFile();
+        inputValue = new FileOperator().readFile();
     }
+
 
     //There must be a population of at least 4 for this to work
     public OperatorNode tournamentSelection(OperatorNode[] firstGen) {
@@ -471,15 +561,21 @@ public class BaseGenetic_多维数据集 {
 
     public void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation, int mutationRate) {
 
+
+
+
+
         if (totalGenerations % 50 == 0) {
             System.out.println("At " + totalGenerations + " gens");
             System.out.println("最优fitness = " + min);
-//            System.out.println(initialPopulation[0].printContent());
+            System.out.println("r^2 = " + calculateRSquare(min));
+            System.out.println(initialPopulation[0].printContent());
         }
 
         if (totalGenerations == 100) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
-            System.out.println("best case: "+bestIndividual.printContent());
+            System.out.println("best case: " + bestIndividual.printContent());
+            System.out.println("fitness = "+ bestIndividual.getFitness() );
 
 //            System.out.println(initialPopulation[0].printContent());
             return;
@@ -499,8 +595,38 @@ public class BaseGenetic_多维数据集 {
     }
 
 
+    public double calculateRSquare(double res) {
+
+//        R^2 = 1- ( fitness(res)/ ∑ (原值 - 原值的平均值)^2)  ?
+
+
+        double tempTot = 0.0;
+        for (FileData fileData : inputValue
+        ) {
+            tempTot = tempTot + fileData.getIndependentVariable();
+        }
+        double avg = tempTot / inputValue.size();
+        double tot = 0.0;
+        for (FileData fileData : inputValue
+        ) {
+            tot = tot + Math.pow(fileData.getIndependentVariable() - avg, 2);
+//            tot = tot + fileData.getIndependentVariable() - avg;
+        }
+
+//        tot = Math.pow(tot,2);
+
+
+        return 1 - (res / tot);
+
+
+    }
+
     public int getNumberOfGenerations() {
         return this.totalGenerations;
+    }
+
+    public double getRSquare() {
+        return calculateRSquare(this.min);
     }
 
 
@@ -508,6 +634,18 @@ public class BaseGenetic_多维数据集 {
  * test
  */
 
-    // TODO: 2022/2/15  改成多维的
-    // TODO: 2022/2/16  优化计算fitness的方法，用空间换时间计算多维多项式 
+    // TODO: 2022/2/15  改成多维的       done
+    // TODO: 2022/2/16  优化计算结果的方法，用空间换时间计算多维多项式
+    // TODO: 2022/2/20  用R^2作为结果    done
+    // TODO: 2022/2/25  将取混沌变量时生成树改为全生成  done
+    // TODO: 2022/5/7   用遗传算法做预学习   done
+
+    // TODO: 2022/5/13  发现Log 和exp容易导致 Nan和infinity出现(因为自然数e), 暂时取消, 后续解决
+
+    // TODO: 2022/5/21  添加生成数据的长度上限
+
+
+    // TODO: 2022/5/29  随想: 用神经网络训练一个能够封分辨当前概率mapping是否容易产生过长数据的模型.  通过判断是否容易生成过长数据, 在预学习时候在fitness给上相应权重.
+
 }
+

@@ -31,11 +31,11 @@ public class 去chaos {
     //value：结果
     public static HashMap<Double, Double> inputValue = new HashMap<>();
 
-    public static Double min = 100000000.0;
+    public static Double min = 1.7976931348623157E308;
 
     public static OperatorNode bestIndividual;
 
-    //Generate base of the tree, avoids generating a single node
+    //Generate BaseGenetic_GaForPreProcessing of the tree, avoids generating a single node
     private OperatorNode generateTree(int depth) {
         int value = random.nextInt(3);
 
@@ -406,7 +406,7 @@ public class 去chaos {
             gp.totalGenerations = 1;
 //            betterChaoticMapping = new ArrayList<>();
 
-            min = 100000000.0;
+            gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
         }
         System.out.println("Time: " + timeList);

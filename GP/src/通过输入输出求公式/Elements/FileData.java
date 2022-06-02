@@ -8,5 +8,4 @@ import java.util.ArrayList;
 public class FileData {
     private Double independentVariable;
     private ArrayList<Double> features;
-
 }

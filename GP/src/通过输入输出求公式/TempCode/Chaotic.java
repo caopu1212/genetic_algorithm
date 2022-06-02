@@ -31,7 +31,7 @@ public class Chaotic {
     //value：结果
     public static HashMap<Double, Double> inputValue = new HashMap<>();
 
-    public static Double min = 100000000.0;
+    public static Double min = 1.7976931348623157E308;
 
     public static OperatorNode bestIndividual;
 
@@ -117,7 +117,7 @@ public class Chaotic {
     }
 
 
-    //Generate base of the tree, avoids generating a single node
+    //Generate BaseGenetic_GaForPreProcessing of the tree, avoids generating a single node
     private OperatorNode generateTree(int cap, int depth, ArrayList probabilityList) {
         //将混沌映射三个一组遍历分配给运算符，并进行轮盘赌计算选择概率
 //        for (Object probabilityList_ : chaoticList) {
@@ -533,7 +533,7 @@ public class Chaotic {
             gp.totalGenerations = 1;
 //            betterChaoticMapping = new ArrayList<>();
 
-            min = 100000000.0;
+            gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
         }
         System.out.println("Time: " + timeList);

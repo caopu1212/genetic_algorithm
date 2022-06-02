@@ -31,11 +31,11 @@ public class 新杂交_传统GP {
     //value：结果
     public static HashMap<Double, Double> inputValue = new HashMap<>();
 
-    public static Double min = 100000000.0;
+    public static Double min = 1.7976931348623157E308;
 
     public static OperatorNode bestIndividual;
 
-    //Generate base of the tree, avoids generating a single node
+    //Generate BaseGenetic_GaForPreProcessing of the tree, avoids generating a single node
     private OperatorNode generateTree(int depth) {
         int value = random.nextInt(3);
 
@@ -344,7 +344,7 @@ public class 新杂交_传统GP {
         int[] example = {0, 0, 4};
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 
-//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
 //        String formula = "x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x - x*x*x*x*x+x*x*x*x+x*x*x+x*x + x";//x^8+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
@@ -375,7 +375,7 @@ public class 新杂交_传统GP {
         ArrayList<Integer> generationList = new ArrayList();
 
         for (int i = 0; i < 10; i++) {
-            inputValue.clear();
+            gp.inputValue.clear();
             gp.initializeSolution(formula, 20, -50.0, 50.0);
 
             long startTime = System.currentTimeMillis();
@@ -391,7 +391,7 @@ public class 新杂交_传统GP {
             //初始化
             gp.totalGenerations = 1;
 
-            min = 100000000.0;
+            gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
         }
         System.out.println("Time: " + timeList);

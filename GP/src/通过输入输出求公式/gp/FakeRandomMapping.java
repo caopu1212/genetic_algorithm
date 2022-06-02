@@ -1,18 +1,69 @@
 package src.通过输入输出求公式.gp;
 
+import src.通过输入输出求公式.tools.MyRandom;
+
 import javax.script.ScriptException;
 import java.util.ArrayList;
+import java.util.Random;
 
-public class LogisticMapping extends BaseGenetic_多维数据集 {
+public class FakeRandomMapping extends BaseGenetic_多维数据集 {
+
+    MyRandom myRandom = new MyRandom();
+
+    @Override
+    public ArrayList chaosMapping(int amountOfChaosMapping) {
+        ArrayList mappingList = new ArrayList();
+        for (int j = 0; j < amountOfChaosMapping; j++) {
+            ArrayList subList = new ArrayList();
+            Random random = new Random();
+            for (int i = 0; i < 500; i++) {
+                double x = random.nextDouble();
+                if (x > 0.1 && x < 0.9) {
+                    int temp = random.nextInt(4);
+                    if (temp == 0) {
+                        temp = random.nextInt(2);
+                        if (temp == 0) {
+                            x = myRandom.makeRandom(0.1f, 0, 2);
+                        } else if (temp == 1) {
+                            x = myRandom.makeRandom(1, 0.9f, 2);
+                        }
+                    }
+                }
+                subList.add(x);
+            }
+            mappingList.add(subList);
+        }
+        return mappingList;
+    }
+//     for (int i = 0; i < 10000; i++) {
+//
+//        double x = random.nextDouble();
+//        double y = random.nextDouble();
+//        if (y > 0.1 && y < 0.9) {
+//            count++;
+//            int temp = random.nextInt(2);
+//            if (temp == 0) {
+//                count1++;
+//                temp = random.nextInt(4);
+//                if (temp == 0) {
+//                    y = myRandom.makeRandom(0.1f, 0, 2);
+//                } else if(temp == 1){
+//                    y = myRandom.makeRandom(1, 0.9f, 2);
+//                }
+//            }
+//        }
+//
+//        series.add(x, y);
+//    }
+
+
     public static void main(String[] args) throws ScriptException {
-        LogisticMapping gp = new LogisticMapping();
-        String formula = "10000*x";
+        FakeRandomMapping gp = new FakeRandomMapping();
 
 
-//        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
-
 //        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+
 
 //        String formula = "x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x - x*x*x*x*x+x*x*x*x+x*x*x+x*x + x";//x^8+x^7+x^6-x^5+x^4 + x^3 + x^2 + x
 //
@@ -25,13 +76,9 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
 //        String formula = "(5*x*x*x*x*x)-(x*x*x*x)+(6*x*x*x)+(x*x)-(x)";//5x^5*-x^4 + 6x^3 + x^2 - x
 
 //        String formula = "x*x*x*x+x*x*x+x*x+x";//x^4 + x^3 + x^2 + x
-//        String formula = "15*x*x*x*x+20*x*x*x-120*x*x+200*x";//15x^4 + 20x^3 -120x^2 + 200x
-
 //        String formula = "x*x*x+x*x+x";//x^3 + x^2 + x
 //        String formula = "(x*x*x)+(x*x*2)+5*x";//x^3 + 2x^2 + 5x
-//        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
-
-//        String formula = "x*x+x*x*x-6*x";
+        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
 
         // 控制 目标公式，入参数量，参数区间
 //        gp.initializeSolution(formula,20,-10.0,10.0);
@@ -42,20 +89,21 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
         ArrayList<Integer> generationList = new ArrayList();
         ArrayList<Double> RSquareList = new ArrayList();
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution();
 
-            gp.evaluateChaoticFactors(10000, 1, 3, 6);
+            gp.evaluateChaoticFactors(5000, 1, 3, 6);
 
             long startTime = System.currentTimeMillis();
-
-            gp.geneticAlgorithm(200, 3, null, 60);
+            gp.geneticAlgorithm(200, 6, null, 60);
             long stopTime = System.currentTimeMillis();
+
             System.out.println("Elapsed time is: " + (stopTime - startTime));
             System.out.println("Number of generations was: " + gp.getNumberOfGenerations());
             System.out.println("r^2 =  " + gp.getRSquare());
+            System.out.println("当前轮数: " + i);
 
             timeList.add(stopTime - startTime);
             generationList.add(gp.getNumberOfGenerations());
@@ -63,7 +111,7 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
 
             //初始化
             gp.totalGenerations = 1;
-            betterChaoticMapping = new ArrayList<>();
+            ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
             gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
         }

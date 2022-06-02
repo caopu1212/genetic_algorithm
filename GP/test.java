@@ -1,15 +1,10 @@
 
-import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 import lombok.Data;
 import lombok.ToString;
 import org.junit.Test;
 
-import java.lang.invoke.LambdaConversionException;
-import java.lang.reflect.Member;
-import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Random;
 
 public class test {
@@ -23,39 +18,37 @@ public class test {
 
     @Test
     public void demo() {
-        human human = new human();
-        human.setName("jack");
+//        for (int j = 0; j < 10; j++) {
+        Random random = new Random();
+        for (int i = 0; i < 1000; i++) {
+            if ( random.nextInt(100)> 80) {
+                System.out.println("yes");
+            }else{
+                System.out.println("no");
+            }
 
-        human human2 = new human();
-        human2.setName("jack");
 
-        System.out.println(human.getName());
-
-        String name = human.getName();
-        if (name == null) {
-            throw new RuntimeException("name is null");
         }
-        String name1 = human2.getName();
-        if (name1 == null) {
-            throw new RuntimeException("name is null");
-        }
+
     }
 
 
     @Test
     public void print() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add("123");
-        list.add("1234");
-        list.add("1235");
+        ArrayList<Double> list = new ArrayList<>();
+        list.add(13.2);
+        list.add(12.2);
+        list.add(3.3);
 
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
-        }
 
-        if (list.get(0).contains("5")) {
+        double sum = list.stream()
+                .mapToDouble(num -> num)
+                .sum();
+        System.out.println(sum);
 
-        }
+//        if (list.get(0).contains("5")) {
+
+//        }
     }
 
     @Test

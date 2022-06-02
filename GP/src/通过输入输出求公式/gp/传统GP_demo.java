@@ -3,43 +3,44 @@ package src.通过输入输出求公式.gp;
 import src.通过输入输出求公式.tree.*;
 
 import javax.script.ScriptException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class 传统GP_demo extends BaseGenetic {
+public class 传统GP_demo extends BaseGenetic_多维数据集 {
+
+
+
 
     @Override
     public OperatorNode generateTree(int depth, ArrayList probabilityList) {
-        int value = random.nextInt(3);
-
-        if (value == 0) {
-            return new AddNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
-        } else if (value == 1) {
-            return new MinNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
-        } else if (value == 2) {
-            return new MultNode(generateRecursiveTree(depth, null), generateRecursiveTree(depth, null));
-        } else {
-            return new SinNode(generateRecursiveTree(depth, null));
+        int value = random.nextInt(nodeClassList.size());
+        ArrayList<Double> empty = new ArrayList<>();
+        Constructor con = nodeClassList.get(value).getDeclaredConstructors()[0];
+        try {
+            OperatorNode leftNode = generateRecursiveTree(depth - 1, empty);
+            return (Node) con.newInstance(con.getParameterCount() > 1 ? Arrays.asList(leftNode, generateRecursiveTree(depth - 1, empty)).toArray() : Arrays.asList(leftNode).toArray());
+        } catch (Exception e) {
+            return null;
         }
     }
 
     //Generate rest of the tree
     @Override
-    public OperatorNode generateRecursiveTree(int depth, ArrayList<Double> cumulativeProbability) {
+    public Node generateNewNode(Double value, ArrayList<Double> cumulativeProbability, int depth) {
+        int i = random.nextInt(nodeClassList.size());
 
-        int value = random.nextInt(8);
-
-        if (value == 0) {
-            return new AddNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
-        } else if (value == 1) {
-            return new MinNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
-        } else if (value == 2) {
-            return new MultNode(generateRecursiveTree(depth - 1, null), generateRecursiveTree(depth - 1, null));
-        } else if (value == 3) {
-            return new SinNode(generateRecursiveTree(depth - 1, null));
-        } else {
-            return new TerminalX1();
+        Constructor con = nodeClassList.get(i).getDeclaredConstructors()[0];
+        try {
+            OperatorNode leftNode = generateRecursiveTree(depth - 1, cumulativeProbability);
+            return (Node) con.newInstance(con.getParameterCount() > 1 ? Arrays.asList(leftNode, generateRecursiveTree(depth - 1, cumulativeProbability)).toArray() : Arrays.asList(leftNode).toArray());
+        } catch (Exception e) {
+            return null;
         }
+
     }
+
+
 
     @Override
     public OperatorNode[] initiatePopulation(int size, int depth) {
@@ -77,7 +78,7 @@ public class 传统GP_demo extends BaseGenetic {
         传统GP_demo gp = new 传统GP_demo();
 
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
-//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
 //        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
@@ -100,47 +101,44 @@ public class 传统GP_demo extends BaseGenetic {
 //        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
 
         // 控制 目标公式，入参数量，参数区间
-        gp.initializeSolution(formula, 10, -50.0, 50.0);
+        gp.initializeSolution();
 
         long totalStartTime = System.currentTimeMillis();
 
-
-//        for (int i = 0; i < 10; i++) {
-//        }
-//              gp.evaluateChaoticFactors(10000, 3, 10,4, example);
-
         ArrayList<Long> timeList = new ArrayList();
         ArrayList<Integer> generationList = new ArrayList();
+        ArrayList<Double> RSquareList = new ArrayList();
 
-        for (int i = 0; i < 5; i++) {
-            inputValue.clear();
+for (int i = 0; i < 30; i++) {
+            gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 10, -1.0, 1.0);
+            gp.initializeSolution();
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, null,50);
+            gp.geneticAlgorithm(200, 3, null, 60);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));
             System.out.println("Number of generations was: " + gp.getNumberOfGenerations());
+            System.out.println("r^2 =  " + gp.getRSquare());
 
             timeList.add(stopTime - startTime);
             generationList.add(gp.getNumberOfGenerations());
+            RSquareList.add(gp.getRSquare());
 
             //初始化
             gp.totalGenerations = 1;
-
-            min = 100000000.0;
+            gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
         }
         System.out.println("Time: " + timeList);
         System.out.println("Number of generations : " + generationList);
+        System.out.println("r^2 =  " + RSquareList);
+
 
         long totalStopTime = System.currentTimeMillis();
 
         System.out.println("total time= " + (totalStopTime - totalStartTime));
-
-
         Long total = Long.valueOf(0);
         for (Long time : timeList) {
             total += time;
@@ -152,10 +150,8 @@ public class 传统GP_demo extends BaseGenetic {
             total1 += generation;
         }
         System.out.println("迭代数均值：" + total1 / generationList.size());
-
-
 //        System.out.println("chaos factors is ：" + betterChaoticMapping);
+
+        System.out.println("r^2 均值 =  " + RSquareList.stream().mapToDouble(a->a).sum()/RSquareList.size());
     }
-
-
 }

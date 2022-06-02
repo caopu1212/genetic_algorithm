@@ -31,7 +31,7 @@ public class 新杂交_Sine映射 {
     //value：结果
     public static HashMap<Double, Double> inputValue = new HashMap<>();
 
-    public static Double min = 100000000.0;
+    public static Double min = 1.7976931348623157E308;
 
     public static OperatorNode bestIndividual;
 
@@ -135,7 +135,7 @@ public class 新杂交_Sine映射 {
     }
 
 
-    //Generate base of the tree, avoids generating a single node
+    //Generate BaseGenetic_GaForPreProcessing of the tree, avoids generating a single node
     private OperatorNode generateTree(int cap, int depth, ArrayList probabilityList) {
         //将混沌映射三个一组遍历分配给运算符，并进行轮盘赌计算选择概率
 //        for (Object probabilityList_ : chaoticList) {
@@ -493,7 +493,7 @@ public class 新杂交_Sine映射 {
 
 
 //
-//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
 //        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
@@ -529,13 +529,13 @@ public class 新杂交_Sine映射 {
         ArrayList<Integer> generationList = new ArrayList();
 
         for (int i = 0; i < 20; i++) {
-            inputValue.clear();
+            gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution(formula, 10, -50.0, 50.0);
-            gp.evaluateChaoticFactors(20000, 1, 5, 8, example);
+            gp.evaluateChaoticFactors(10, 1, 5, 8, example);
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, example, null);
+            gp.geneticAlgorithm(1, 3, example, null);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));
@@ -547,7 +547,7 @@ public class 新杂交_Sine映射 {
             //初始化
             gp.totalGenerations = 1;
 
-            min = 100000000.0;
+            gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
         }
         System.out.println("Time: " + timeList);

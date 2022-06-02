@@ -20,10 +20,10 @@ public class FunctionGuessing {
     private int totalGenerations = 1;
     private Random random = new Random();
     public static HashMap<Double, Double> inputValue = new HashMap<>();
-    public static Double min = 100000000.0;
+    public static Double min = 1.7976931348623157E308;
 
 
-    //Generate base of the tree, avoids generating a single node
+    //Generate BaseGenetic_GaForPreProcessing of the tree, avoids generating a single node
     private OperatorNode generateTree(int depth) {
         int value = random.nextInt(3);
 

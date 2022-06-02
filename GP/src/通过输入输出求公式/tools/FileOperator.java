@@ -11,10 +11,14 @@ import java.util.Arrays;
 /**
  * 文本操作 工具类
  */
-public class fileOperator {
+public class FileOperator {
     @Test
     public ArrayList<FileData> readFile() {
-        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\yacht-test-0.txt"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
+
+//        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\logistic.txt";
+//        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\demo";
+//        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\yacht-train-0"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
+        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\PMLB_617_fri_c3_500_5"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
         File filename = new File(pathname); // 要读取以上路径的input。txt文件
         String line = "";
         ArrayList<FileData> totalList = new ArrayList<>();
@@ -32,7 +36,7 @@ public class fileOperator {
                     break;
                 }
                 //读取每一行，用，分割
-                String[] splitListString = line.split(",");
+                String[] splitListString = line.split(" ");
                 //将String 转为Double
                 Object[] SplitListDoubleTemp = Arrays
                         .stream(splitListString)
@@ -57,7 +61,7 @@ public class fileOperator {
                 fileData.setFeatures(SplitArrayListDouble);
 
                 totalList.add(fileData);
-                System.out.println(count++);
+
 
             }
         } catch (FileNotFoundException e) {
@@ -65,7 +69,7 @@ public class fileOperator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(totalList);
+//        System.out.println(totalList);
         return totalList;
     }
 

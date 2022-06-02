@@ -4,7 +4,7 @@ import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class RandomMapping extends BaseGenetic {
+public class RandomMapping extends BaseGenetic_多维数据集 {
     @Override
     public ArrayList chaosMapping(int amountOfChaosMapping) {
         ArrayList mappingList = new ArrayList();
@@ -24,7 +24,7 @@ public class RandomMapping extends BaseGenetic {
         RandomMapping gp = new RandomMapping();
 
 
-//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^11+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
+//        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 //        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
 
 
@@ -44,43 +44,49 @@ public class RandomMapping extends BaseGenetic {
         String formula = "(x*x*2)+3*x";// 2x^2 + 3x
 
         // 控制 目标公式，入参数量，参数区间
-        gp.initializeSolution(formula, 10, -50.0, 50.0);
+
+//        gp.initializeSolution(formula,20,-10.0,10.0);
 
         long totalStartTime = System.currentTimeMillis();
 
         ArrayList<Long> timeList = new ArrayList();
         ArrayList<Integer> generationList = new ArrayList();
+        ArrayList<Double> RSquareList = new ArrayList();
 
-        for (int i = 0; i < 5; i++) {
-            inputValue.clear();
+        for (int i = 0; i < 50; i++) {
+            gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
-            gp.initializeSolution(formula, 50, -1.0, 1.0);
-            gp.evaluateChaoticFactors(3000, 3, 5, 4);
+            gp.initializeSolution();
+
+            gp.evaluateChaoticFactors(5000, 1, 3, 6);
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, null, 50);
+            gp.geneticAlgorithm(200, 6, null, 60);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));
             System.out.println("Number of generations was: " + gp.getNumberOfGenerations());
+            System.out.println("r^2 =  " + gp.getRSquare());
+            System.out.println("当前轮数: " + i);
 
             timeList.add(stopTime - startTime);
             generationList.add(gp.getNumberOfGenerations());
+            RSquareList.add(gp.getRSquare());
 
             //初始化
             gp.totalGenerations = 1;
-
-            min = 100000000.0;
+            ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
+            gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
         }
         System.out.println("Time: " + timeList);
         System.out.println("Number of generations : " + generationList);
+        System.out.println("r^2 =  " + RSquareList);
+
 
         long totalStopTime = System.currentTimeMillis();
 
         System.out.println("total time= " + (totalStopTime - totalStartTime));
-
-
         Long total = Long.valueOf(0);
         for (Long time : timeList) {
             total += time;
@@ -92,9 +98,8 @@ public class RandomMapping extends BaseGenetic {
             total1 += generation;
         }
         System.out.println("迭代数均值：" + total1 / generationList.size());
-
-
 //        System.out.println("chaos factors is ：" + betterChaoticMapping);
-    }
 
+        System.out.println("r^2 均值 =  " + RSquareList.stream().mapToDouble(a -> a).sum() / RSquareList.size());
+    }
 }
