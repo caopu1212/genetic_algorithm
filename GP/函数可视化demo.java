@@ -28,47 +28,10 @@ public class 函数可视化demo {
         double x;
         double y = random.nextDouble();
         for (int i = 0; i < 5000; i++) {
-
-
-            // pseudo random
-//            x = random.nextDouble();
-//            y = random.nextDouble();
-//            if (y > 0.1 && y < 0.9) {
-//                count++;
-//                int temp = random.nextInt(4);
-//                if (temp == 0) {
-//                    count1++;
-//                    temp = random.nextInt(2);
-//                    if (temp == 0) {
-//                        y = myRandom.makeRandom(0.1f, 0, 2);
-//                    } else if(temp == 1){
-//                        y = myRandom.makeRandom(1, 0.9f, 2);
-//                    }
-//                }
-//            }
-
             //sine
-//
              x = random.nextDouble();
             y = Math.abs(Math.sin(Math.PI * y));
             System.out.println(y);
-
-            //logistc
-
-//             x = random.nextDouble();
-//             y = y * 4 * (1 - y);
-//            System.out.println(y);
-
-
-            //tent
-//            x = random.nextDouble();
-//
-//            if (y <= 0.5) {
-//                y = 1.5 * y;
-//            } else {
-//                y = 1.5 * (1 - y);
-//            }
-
             series.add(x, y);
         }
 

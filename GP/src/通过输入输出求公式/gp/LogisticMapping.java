@@ -46,10 +46,10 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
             gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution();
-
+            long startTime = System.currentTimeMillis();
             gp.evaluateChaoticFactors(10000, 1, 3, 6);
 
-            long startTime = System.currentTimeMillis();
+//            long startTime = System.currentTimeMillis();
 
             gp.geneticAlgorithm(200, 3, null, 60);
             long stopTime = System.currentTimeMillis();

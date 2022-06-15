@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GP/GP.iml" filepath="$PROJECT_DIR$/GP/GP.iml" />
       <module fileurl="file://$PROJECT_DIR$/genetic_algorithm.iml" filepath="$PROJECT_DIR$/genetic_algorithm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/untitled/other_algorithm.iml" filepath="$PROJECT_DIR$/untitled/other_algorithm.iml" />
     </modules>
   </component>
 </project>

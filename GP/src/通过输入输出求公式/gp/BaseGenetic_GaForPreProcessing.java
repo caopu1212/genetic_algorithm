@@ -34,6 +34,8 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
     public static List<Class<? extends Node>> nodeClassList = Node.getNodeClassList();
 
 
+
+
     public void BaseGenetic_GaForPreProcessing() {
 
     }
@@ -402,43 +404,12 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
 
     public static void main(String[] args) {
         BaseGenetic_GaForPreProcessing gp = new BaseGenetic_GaForPreProcessing();
-//        ArrayList<PreProcessing> aa = gp.initializationsForPreProcessing(50, 6);
-//        ArrayList<PreProcessing> b = demo.selectionForPreprocessing(3,5, 6, a);
-
-//        ArrayList<PreProcessing> c = gp.calcilateRSquareForAllPreprocessing(aa);
-
-
-        // 遗传算法预学习
-//        demo.geneticAlgorithmForPreProcessing(50,6,5,5,10);
-
 
 //        LogisticMapping gp = new LogisticMapping();
         String formula = "10000*x";
 
-
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
-
-//        String formula = "x*x*x*x*x*x*x*x*x*x - x*x*x*x*x*x*x*x*x + x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^10 - x^9 +x^7+x^6+x^5+x^4 + x^3 + x^2 + x
-
-//        String formula = "x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x - x*x*x*x*x+x*x*x*x+x*x*x+x*x + x";//x^8+x^7+x^6-x^5+x^4 + x^3 + x^2 + x
-//
-//        String formula = "x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^7+x^6+x^5+x^4 + x^3 + x^2 + x
-//        String formula = "2*x*x*x*x*x*x*x+x*x*x*x*x*x-5*x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//2x^7+x^6-5x^5+x^4 + x^3 + x^2 + x
-
-//        String formula = "x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^6+x^5+x^4 + x^3 + x^2 + x
-
-//        String formula = "x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^5+x^4 + x^3 + x^2 + x
-//        String formula = "(5*x*x*x*x*x)-(x*x*x*x)+(6*x*x*x)+(x*x)-(x)";//5x^5*-x^4 + 6x^3 + x^2 - x
-
-//        String formula = "x*x*x*x+x*x*x+x*x+x";//x^4 + x^3 + x^2 + x
-//        String formula = "15*x*x*x*x+20*x*x*x-120*x*x+200*x";//15x^4 + 20x^3 -120x^2 + 200x
-
-//        String formula = "x*x*x+x*x+x";//x^3 + x^2 + x
-//        String formula = "(x*x*x)+(x*x*2)+5*x";//x^3 + 2x^2 + 5x
-//        String formula = "(x*x*2)+3*x";// 2x^2 + 3x
-
-//        String formula = "x*x+x*x*x-6*x";
 
         // 控制 目标公式，入参数量，参数区间
 //        gp.initializeSolution(formula,20,-10.0,10.0);
@@ -449,7 +420,7 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
         ArrayList<Integer> generationList = new ArrayList();
         ArrayList<Double> RSquareList = new ArrayList();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution();
@@ -458,10 +429,12 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
 
             ArrayList<ArrayList<Double>> tempBetterChaoticMapping = new ArrayList<>();
 
-            //j = 最后保存的betterMapping的数量
-            for (int j = 0; j < 1; j++) {
+            long startTime = System.currentTimeMillis();
 
-                gp.geneticAlgorithmForPreProcessing(200, 6, 60, 50, 1);
+            //j = 最后保存的betterMapping的数量
+            for (int j = 0; j < 3; j++) {
+
+                gp.geneticAlgorithmForPreProcessing(350, 9, 5, 50, 1);
 
                 for ( ArrayList<Double> tempList :BaseGenetic_多维数据集.betterChaoticMapping
                      ) {
@@ -474,10 +447,9 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
             }
             BaseGenetic_多维数据集.betterChaoticMapping = tempBetterChaoticMapping;
 
+//            long startTime = System.currentTimeMillis();
 
-            long startTime = System.currentTimeMillis();
-
-            gp.geneticAlgorithm(200, 6, null, 60);
+            gp.geneticAlgorithm(200, 3, null, 60);
             long stopTime = System.currentTimeMillis();
             System.out.println("Elapsed time is: " + (stopTime - startTime));
             System.out.println("Number of generations was: " + gp.getNumberOfGenerations());

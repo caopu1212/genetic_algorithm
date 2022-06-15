@@ -10,7 +10,7 @@ public class DiviNode extends Node {
 
 
 
-  //analytic quotient (AQ)解析商  a/根号下(1+b^2)
+  //analytic quotient(AQ)解析商  a/根号下(1+b^2), 就是若分母为0, 则返回分子
   public Double operate() {
     return this.getLeft().operate() /  Math.sqrt(1 + Math.pow(this.getRight().operate(),2)) ;
   }

@@ -17,8 +17,8 @@ public class FileOperator {
 
 //        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\logistic.txt";
 //        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\demo";
-//        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\yacht-train-0"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
-        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\PMLB_617_fri_c3_500_5"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
+        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\yacht-train-0"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
+//        String pathname = "F:\\python\\genetic_algorithm\\GP\\dataset\\PMLB_617_fri_c3_500_5"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
         File filename = new File(pathname); // 要读取以上路径的input。txt文件
         String line = "";
         ArrayList<FileData> totalList = new ArrayList<>();
