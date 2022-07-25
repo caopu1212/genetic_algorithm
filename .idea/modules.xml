@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GP/GP.iml" filepath="$PROJECT_DIR$/GP/GP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/机器学习/Groovt.iml" filepath="$PROJECT_DIR$/机器学习/Groovt.iml" />
       <module fileurl="file://$PROJECT_DIR$/genetic_algorithm.iml" filepath="$PROJECT_DIR$/genetic_algorithm.iml" />
     </modules>
   </component>

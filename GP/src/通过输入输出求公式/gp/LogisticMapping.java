@@ -47,11 +47,11 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution();
             long startTime = System.currentTimeMillis();
-            gp.evaluateChaoticFactors(10000, 1, 3, 6);
 
 //            long startTime = System.currentTimeMillis();
+            gp.evaluateChaoticFactors(10000, 1, 3, 9);
+            gp.geneticAlgorithm(100, 3, null, 60,100);
 
-            gp.geneticAlgorithm(200, 3, null, 60);
             long stopTime = System.currentTimeMillis();
             System.out.println("Elapsed time is: " + (stopTime - startTime));
             System.out.println("Number of generations was: " + gp.getNumberOfGenerations());
@@ -66,6 +66,8 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
             betterChaoticMapping = new ArrayList<>();
             gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
+            gp.totalFitnessCalculatedTimes = 0;
+
         }
         System.out.println("Time: " + timeList);
         System.out.println("Number of generations : " + generationList);

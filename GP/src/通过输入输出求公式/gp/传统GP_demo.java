@@ -109,13 +109,14 @@ public class 传统GP_demo extends BaseGenetic_多维数据集 {
         ArrayList<Integer> generationList = new ArrayList();
         ArrayList<Double> RSquareList = new ArrayList();
 
-for (int i = 0; i < 30; i++) {
+for (int i = 0; i < 50; i++) {
             gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution();
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, null, 60);
+            gp.geneticAlgorithm(100, 3, null, 60,200);
+
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));
@@ -130,6 +131,7 @@ for (int i = 0; i < 30; i++) {
             gp.totalGenerations = 1;
             gp.min = 1.7976931348623157E308;
             gp.bestIndividual = null;
+            gp.totalFitnessCalculatedTimes = 0;
         }
         System.out.println("Time: " + timeList);
         System.out.println("Number of generations : " + generationList);

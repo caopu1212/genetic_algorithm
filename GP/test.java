@@ -65,6 +65,15 @@ public class test {
 
     }
 
+    @Test
+    public void calculate(){
+        System.out.println(Math.exp(121.));
+        System.out.println(Math.tan(Math.exp(121.)) );
+        System.out.println(Math.log(Math.tan(Math.exp(121.))));
+
+        System.out.println(Math.log(Math.tan(Math.exp(121.))));
+
+    }
 
     @Data
     @ToString

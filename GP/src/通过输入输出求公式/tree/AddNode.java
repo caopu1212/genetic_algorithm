@@ -10,6 +10,7 @@ public class AddNode extends Node {
   }
   
   public boolean isFunction() {
+
     return true;
   }
   

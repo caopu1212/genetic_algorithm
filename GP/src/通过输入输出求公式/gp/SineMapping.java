@@ -66,7 +66,7 @@ public class SineMapping extends BaseGenetic_多维数据集 {
             gp.evaluateChaoticFactors(5000, 1, 3, 6);
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 6, null, 60);
+            gp.geneticAlgorithm(200, 3, null, 60,100);;
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));

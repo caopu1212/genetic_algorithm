@@ -30,7 +30,7 @@ public class Statistic {
             gp.evaluateChaoticFactors(5000, 1, 5, 6);
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(500, 6, null, 50);
+            gp.geneticAlgorithm(500, 6, null, 50,100);
             long stopTime = System.currentTimeMillis();
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));

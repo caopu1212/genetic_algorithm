@@ -12,6 +12,7 @@ public interface OperatorNode {
   public void copyLeft(OperatorNode copy);
   public void copyRight(OperatorNode copy);
   public String printContent();
+  public int countSubnodes(OperatorNode root);
   public void setFitness(Double fitness);
   public Double getFitness();
   public void setNormalizedFitness(double normFitness);

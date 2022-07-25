@@ -19,6 +19,7 @@ public abstract class Node implements OperatorNode {
     private double normalizedFitness;
     private int mark;
 
+
     public static List<Class<? extends Node>> getNodeClassList() {
 //      Reflections f = new Reflections("src.通过输入输出求公式.tree",new TypeAnnotationsScanner());
         Reflections f = new Reflections(
@@ -110,9 +111,24 @@ public abstract class Node implements OperatorNode {
         if (this.getRight() == null) {
             return this.getLeft().printContent() + ' ' + this.rep;
         }
-
         return this.getLeft().printContent() + ' ' + this.getRight().printContent() + ' ' + this.rep;
     }
+
+    //计算子节点数量
+    public int countSubnodes(OperatorNode root) {
+        int nodes = 0;
+        if (root.isTerminal())
+            return 0;
+        if (root.getRight() == null) {
+            // 单参数运算符的情况
+            nodes = 1 + countSubnodes(root.getLeft());
+        } else {
+            nodes = 1 + countSubnodes(root.getLeft()) + countSubnodes(root.getRight());
+        }
+
+        return nodes;
+    }
+
 
     public void setFitness(Double fitness) {
         this.fitness = fitness;

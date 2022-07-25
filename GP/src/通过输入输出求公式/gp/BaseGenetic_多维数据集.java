@@ -17,7 +17,7 @@ import java.util.*;
  * 变量：x
  */
 
-public class BaseGenetic_多维数据集 extends BaseGenetic {
+public class BaseGenetic_多维数据集 {
     public static int totalGenerations = 1;
     public Random random = new Random();
     public static ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
@@ -30,6 +30,8 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
     public static OperatorNode bestIndividual = null;
 
     public static List<Class<? extends Node>> nodeClassList = Node.getNodeClassList();
+
+    public static int totalFitnessCalculatedTimes = 0;
 
 
     public BaseGenetic_多维数据集() {
@@ -67,7 +69,8 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
         Double count = 0.0;
         // 遍历生成的logistic mapping，随机取一定数量的数据作为操作符的权重（之后按顺序分配给运算符的概率）
         for (Object mapping : mappingList) {
-            System.out.println("part1 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
+
+//            System.out.println("part1 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
 
             ArrayList probabilityList = new ArrayList();
             ArrayList temp = (ArrayList) mapping;
@@ -93,7 +96,7 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
         count = 0.0;
         //对不同的映射进行amountOfTree次树生成，看平均值
         for (Object probabilityList_ : chaoticList) {
-            System.out.println("part2 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
+//            System.out.println("part2 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
 
 
             ArrayList<OperatorNode> chaoticPopulationList = new ArrayList();
@@ -136,7 +139,7 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
                         bestFitessList.set(i, average);
                         betterChaoticMapping.set(i, (ArrayList<Double>) key);
 
-//                        System.out.println("fitness for preprocessing = "+ average);
+                        System.out.println("fitness for preprocessing = " + average);
                         break;
                     }
                 }
@@ -275,8 +278,8 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
             return new TerminalX0(mark);
         }
 
-        //   为terminal node的概率为1/6
-        int valueOfTerminate = random.nextInt(5);
+        //   为terminal node的概率为1/n(操作符数量)
+        int valueOfTerminate = random.nextInt(nodeClassList.size());
         if (valueOfTerminate == 0) {
             return new TerminalX0(mark);
         } else {
@@ -364,12 +367,24 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
 //            evaluation = evaluation + Math.pow(clone.operate() - fileData.getIndependentVariable(), 2);
 //            System.out.println(clone.operate());
 //            System.out.println(clone.printContent());
-            evaluation = evaluation + Math.pow(fileData.getIndependentVariable() - clone.operate(), 2);
-//            System.out.println(evaluation);
+            double answer = Math.pow(fileData.getIndependentVariable() - clone.operate(), 2);
+//            if (Double.isInfinite(temp)) {
+//                System.out.println(clone.printContent());
+//                System.out.println("啊哈哈infinity");
+//            }
+//            if (Double.isNaN(temp)) {
+//                System.out.println(clone.printContent());
+//                System.out.println("啊哈哈Nan");
+//            }
+                evaluation = evaluation + answer;
 
+
+
+//            evaluation = evaluation + Math.pow(fileData.getIndependentVariable() - clone.operate(), 2);
+//            System.out.println(evaluation);
         }
 
-
+//        for (Map.Entry<Double, Double> input : inputValue.entrySet()) {
 //        for (Map.Entry<Double, Double> input : inputValue.entrySet()) {
 //            //将树的变量替换为目标输入
 //            parse(clone, input.getKey());
@@ -386,6 +401,8 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
 //
 ////        evaluation = totalInput;
 
+        totalFitnessCalculatedTimes += 1;
+
         return evaluation;
     }
 
@@ -393,23 +410,24 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
         if (root.isTerminal()) {
             return root;
         }
+        int i = root.countSubnodes(root);
+        int decision = random.nextInt(i);
         if (root.getRight() == null) {
-            int decision = random.nextInt(2);
             if (decision == 0) {
-                return pickStop(root.getLeft());
-            } else if (decision == 1) {
                 return root;
+            } else {
+                return pickStop(root.getLeft());
             }
         }
-
-        int decision = random.nextInt(3);
-        if (decision == 0) {
-            return pickStop(root.getLeft());
-        } else if (decision == 1) {
+        int decisionSubTree = random.nextInt(2);
+        if (decision == 0)
             return root;
-        } else {
+        if (decisionSubTree == 0) {
+            return pickStop(root.getLeft());
+        } else if (decisionSubTree == 1) {
             return pickStop(root.getRight());
         }
+        return null;
     }
 
     public OperatorNode crossOver(OperatorNode dad, OperatorNode mom, int mutationRate) {
@@ -420,8 +438,11 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
         if (mutation > mutationRate) {
             if (decision == 0) {
                 dadStopPoint.setLeft(momStopPoint);
-            } else {
+            } else if (dadStopPoint.getRight() != null) {
+                //操作符只有一个入参的情况
                 dadStopPoint.setRight(momStopPoint);
+            } else {
+                dadStopPoint.setLeft(momStopPoint);
             }
         } else {
             int index = random.nextInt(betterChaoticMapping.size());
@@ -431,7 +452,6 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
                 dadStopPoint.setRight(generateTree(1, betterChaoticMapping.get(index)));
             }
         }
-
         return cloneDad;
     }
 
@@ -439,8 +459,8 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
         OperatorNode[] population = new Node[size];
 
         for (int i = 0; i < size; i++) {
-            population[i] = generateTree(depth, BaseGenetic_多维数据集.betterChaoticMapping.get(random.nextInt(BaseGenetic_多维数据集.  betterChaoticMapping.size())));
-            System.out.println("new population: " + population[i].printContent());
+            population[i] = generateTree(depth, BaseGenetic_多维数据集.betterChaoticMapping.get(random.nextInt(BaseGenetic_多维数据集.betterChaoticMapping.size())));
+//            System.out.println("new population: " + population[i].printContent());
         }
 
         return population;
@@ -471,8 +491,9 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
      * @return
      */
     public void evaluateFitnessChaotic(OperatorNode population) {
-        OperatorNode clone = population.cloneTree();
-        Double result = evaluate(clone);
+//        OperatorNode clone = population.cloneTree();
+//        Double result = evaluate(clone);
+        Double result = evaluate(population);
         population.setFitness(Math.abs(result));
     }
 
@@ -559,10 +580,7 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
         return breed;
     }
 
-    public void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation, int mutationRate) {
-
-
-
+    public void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation, int mutationRate, int iteration) {
 
 
         if (totalGenerations % 50 == 0) {
@@ -572,11 +590,11 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
             System.out.println(initialPopulation[0].printContent());
         }
 
-        if (totalGenerations == 100) {
+        if (totalGenerations == iteration) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
             System.out.println("best case: " + bestIndividual.printContent());
-            System.out.println("fitness = "+ bestIndividual.getFitness() );
-
+            System.out.println("fitness = " + bestIndividual.getFitness());
+            System.out.println("计算fitness的次数 = " + totalFitnessCalculatedTimes);
 //            System.out.println(initialPopulation[0].printContent());
             return;
         }
@@ -590,16 +608,13 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
         } else {
             OperatorNode[] breed = reproduction(population, size, mutationRate);
             ++this.totalGenerations;
-            geneticAlgorithm(size, depth, breed, mutationRate);
+            geneticAlgorithm(size, depth, breed, mutationRate, iteration);
         }
     }
 
 
     public double calculateRSquare(double res) {
-
 //        R^2 = 1- ( fitness(res)/ ∑ (原值 - 原值的平均值)^2)  ?
-
-
         double tempTot = 0.0;
         for (FileData fileData : inputValue
         ) {
@@ -612,13 +627,8 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
             tot = tot + Math.pow(fileData.getIndependentVariable() - avg, 2);
 //            tot = tot + fileData.getIndependentVariable() - avg;
         }
-
 //        tot = Math.pow(tot,2);
-
-
         return 1 - (res / tot);
-
-
     }
 
     public int getNumberOfGenerations() {
@@ -647,5 +657,6 @@ public class BaseGenetic_多维数据集 extends BaseGenetic {
 
     // TODO: 2022/5/29  随想: 用神经网络训练一个能够封分辨当前概率mapping是否容易产生过长数据的模型.  通过判断是否容易生成过长数据, 在预学习时候在fitness给上相应权重.
 
+    //  TODO: 2022/7/17 为树加一个方法: 求当前所有子节点的数量   done
 }
 

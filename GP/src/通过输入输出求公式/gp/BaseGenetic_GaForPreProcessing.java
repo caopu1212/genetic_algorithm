@@ -143,7 +143,7 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
 
         while (true) {
             // 若新世代数量达到一定量时候停止循环
-            if (newGeneration.size() >= oldGeneration.size() / 2) break;
+            if (newGeneration.size() >= oldGeneration.size() / 1.5) break;
             //轮盘赌选父母
             PreProcessing father = gp.rouletteSelection(assiginedProbabilityPreProcessingList);
             PreProcessing mother = gp.rouletteSelection(assiginedProbabilityPreProcessingList);
@@ -281,7 +281,6 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
                 }
             }
         }
-
         return false;
 
     }
@@ -420,7 +419,7 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
         ArrayList<Integer> generationList = new ArrayList();
         ArrayList<Double> RSquareList = new ArrayList();
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             gp.inputValue.clear();
             // 控制 目标公式，入参数量，参数区间
             gp.initializeSolution();
@@ -432,15 +431,11 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
             long startTime = System.currentTimeMillis();
 
             //j = 最后保存的betterMapping的数量
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 1; j++) {
 
-                gp.geneticAlgorithmForPreProcessing(350, 9, 5, 50, 1);
-
-                for ( ArrayList<Double> tempList :BaseGenetic_多维数据集.betterChaoticMapping
-                     ) {
-                    tempBetterChaoticMapping.add(tempList);
-                }
-
+                gp.geneticAlgorithmForPreProcessing(300, 6, 10, 40, 1);
+                for ( ArrayList<Double> tempList :BaseGenetic_多维数据集.betterChaoticMapping) {
+                    tempBetterChaoticMapping.add(tempList); }
                 BaseGenetic_多维数据集.betterChaoticMapping = new ArrayList<>();
                 betterPreprocessing = new ArrayList<>();
                 bestPreProcessing = new PreProcessing();
@@ -449,7 +444,7 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
 
 //            long startTime = System.currentTimeMillis();
 
-            gp.geneticAlgorithm(200, 3, null, 60);
+            gp.geneticAlgorithm(100, 3, null, 60,100);
             long stopTime = System.currentTimeMillis();
             System.out.println("Elapsed time is: " + (stopTime - startTime));
             System.out.println("Number of generations was: " + gp.getNumberOfGenerations());
@@ -470,6 +465,8 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
             BaseGenetic_多维数据集.bestIndividual = null;
             bestIndividual = null;
             bestPreProcessing = new PreProcessing();
+
+            BaseGenetic_多维数据集.totalFitnessCalculatedTimes = 0;
 
 
             System.out.println("这是第" + i + "次迭代啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊");
