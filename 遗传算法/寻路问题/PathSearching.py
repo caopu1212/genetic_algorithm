@@ -10,11 +10,11 @@ from BaseUtils import *
 """
 
 """level 1"""
-# dungeon = np.array([[0, 0, 0, 0, 1],
-#                     [1, 0, 0, 0, 1],
-#                     [0, 0, 0, 1, 1],
-#                     [0, 1, 0, 0, 0],
-#                     [0, 0, 0, 1, 0]])
+dungeon = np.array([[0, 0, 0, 0, 1],
+                    [1, 0, 0, 0, 1],
+                    [0, 0, 0, 1, 1],
+                    [0, 1, 0, 0, 0],
+                    [0, 0, 0, 1, 0]])
 """level 2"""
 
 dungeon1 = np.array([ [0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
@@ -370,9 +370,9 @@ if __name__ == '__main__':
 
         initialize()
         # 获得最强的个体
-        # print(species[fitness_list.index(max(fitness_list))])  # 先获得目标的index
-        # print("fitness : " + str(max(fitness_list)))
-        # print("路径长度：" + str(len(species[fitness_list.index(max(fitness_list))])))
+        print(species[fitness_list.index(max(fitness_list))])  # 先获得目标的index
+        print("fitness : " + str(max(fitness_list)))
+        print("路径长度：" + str(len(species[fitness_list.index(max(fitness_list))])))
         if len(species[fitness_list.index(max(fitness_list))]) <= 70 or time.process_time() > 120:
             break
 

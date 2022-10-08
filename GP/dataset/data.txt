@@ -4,3 +4,21 @@
 8,8
 9,10
 10,7
+
+
+aaa & bbb & ccc & ddd & eee\\
+aaaa & bbbb & cccc & dddd & eeee\\
+aaaaa & bbbbb & ccccc & ddddd & eeeee\\
+aaaaaa & bbbbbb & cccccc & dddddd & eeeeee\\
+1.000 & 2.000 & 3.000 & 4.000 & 5.000\\
+
+
+SVM in signal	&0.541	&0.665\\
+MLP in signal	&0.495	&0.622\\
+CNN 1D in signal	&0.5443	&0.5063\\
+SVM in Fourier transform	&0.495	&0.6278\\
+MLP in Fourier transform	&0.5214	&0.6672\\
+CNN 1D in Fourier transform	&0.4965	&0.49324\\
+LSTM and mcff　	&0.42038	&0.640\\
+CNN and mel	&0.55686	&0.56582\\
+ResNet and mel	&0.53036	&0.51722\\

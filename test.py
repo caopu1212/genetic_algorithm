@@ -2,7 +2,6 @@ import numpy as np
 import math
 import random
 import matplotlib.pyplot as plt
-
 # x = np.arange(-10, 10, 0.1)
 # y = []
 # for t in x:

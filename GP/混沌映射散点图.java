@@ -4,8 +4,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import src.通过输入输出求公式.tools.FileOperator;
-import src.通过输入输出求公式.tools.MyRandom;
+import src.符号回归.tools.FileOperator;
+import src.符号回归.tools.MyRandom;
 
 import javax.swing.*;
 import java.util.Random;
@@ -29,27 +29,27 @@ public class 混沌映射散点图 {
 
 
             // pseudo random
-//            x = random.nextDouble();
-//            y = random.nextDouble();
-//            if (y > 0.1 && y < 0.9) {
-//                count++;
-//                int temp = random.nextInt(4);
-//                if (temp == 0) {
-//                    count1++;
-//                    temp = random.nextInt(2);
-//                    if (temp == 0) {
-//                        y = myRandom.makeRandom(0.1f, 0, 2);
-//                    } else if(temp == 1){
-//                        y = myRandom.makeRandom(1, 0.9f, 2);
-//                    }
-//                }
-//            }
+            x = random.nextDouble();
+            y = random.nextDouble();
+            if (y > 0.1 && y < 0.9) {
+                count++;
+                int temp = random.nextInt(4);
+                if (temp == 0) {
+                    count1++;
+                    temp = random.nextInt(2);
+                    if (temp == 0) {
+                        y = myRandom.makeRandom(0.1f, 0, 2);
+                    } else if(temp == 1){
+                        y = myRandom.makeRandom(1, 0.9f, 2);
+                    }
+                }
+            }
 
             //sine
 //
-            x = random.nextDouble();
-            y = Math.abs(Math.sin(Math.PI * y));
-            System.out.println(y);
+//            x = random.nextDouble();
+//            y = Math.abs(Math.sin(Math.PI * y));
+//            System.out.println(y);
 
             //logistc
 
@@ -76,7 +76,7 @@ public class 混沌映射散点图 {
         dataset.addSeries(series);
 
         JFreeChart chart = ChartFactory.createScatterPlot(
-                "tent", // chart title
+                "pseudo random", // chart title
                 "x", // x axis label
                 "y", // y axis label
                 dataset, // data
