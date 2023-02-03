@@ -3,6 +3,7 @@ package src.符号回归.gp;
 import src.符号回归.tools.MyRandom;
 
 import javax.script.ScriptException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -57,7 +58,7 @@ public class FakeRandomMapping extends BaseGenetic_多维数据集 {
 //    }
 
 
-    public static void main(String[] args) throws ScriptException {
+    public static void main(String[] args) throws ScriptException, IOException, ClassNotFoundException {
         FakeRandomMapping gp = new FakeRandomMapping();
 
 

@@ -1,6 +1,7 @@
 package src.符号回归.gp;
 
 import javax.script.ScriptException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class LogisticMapping extends BaseGenetic_多维数据集 {
@@ -49,8 +50,14 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
             long startTime = System.currentTimeMillis();
 
 //            long startTime = System.currentTimeMillis();
-            gp.evaluateChaoticFactors(10000, 1, 3, 7);
-            gp.geneticAlgorithm(1000, 3, null, 60,100);
+            gp.evaluateChaoticFactors(10000, 1, 5, 7);
+            try {
+                gp.geneticAlgorithm(100, 3, null, 60,100);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
 
             long stopTime = System.currentTimeMillis();
             System.out.println("Elapsed time is: " + (stopTime - startTime));

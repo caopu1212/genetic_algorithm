@@ -2,6 +2,7 @@ package src.符号回归.tools;
 
 import src.符号回归.gp.BaseGenetic_多维数据集;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Statistic {
@@ -11,7 +12,7 @@ public class Statistic {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         BaseGenetic_多维数据集 gp = new BaseGenetic_多维数据集();
 
         gp.initializeSolution();

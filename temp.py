@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 class LinearRegression:
     def __init__(self, dataset):
@@ -70,6 +71,9 @@ y = [60, 60, 58, 60, 70, 72] # 女儿的身高
 
 
 class LinearRegression1:
+    
+
+
     def __init__(self, x_set, y_set):
         self.x_set = x_set
         self.y_set = y_set

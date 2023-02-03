@@ -51,7 +51,7 @@ public class 函数可视化demo {
                 false // urls
         );
 
-        ChartFrame frame = new ChartFrame("my picture", chart);
+        ChartFrame frame = new ChartFrame("my picture",chart);
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

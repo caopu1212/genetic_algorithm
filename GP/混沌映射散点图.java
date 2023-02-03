@@ -29,27 +29,27 @@ public class 混沌映射散点图 {
 
 
             // pseudo random
-            x = random.nextDouble();
-            y = random.nextDouble();
-            if (y > 0.1 && y < 0.9) {
-                count++;
-                int temp = random.nextInt(4);
-                if (temp == 0) {
-                    count1++;
-                    temp = random.nextInt(2);
-                    if (temp == 0) {
-                        y = myRandom.makeRandom(0.1f, 0, 2);
-                    } else if(temp == 1){
-                        y = myRandom.makeRandom(1, 0.9f, 2);
-                    }
-                }
-            }
+//            x = random.nextDouble();
+//            y = random.nextDouble();
+//            if (y > 0.1 && y < 0.9) {
+//                count++;
+//                int temp = random.nextInt(4);
+//                if (temp == 0) {
+//                    count1++;
+//                    temp = random.nextInt(2);
+//                    if (temp == 0) {
+//                        y = myRandom.makeRandom(0.1f, 0, 2);
+//                    } else if(temp == 1){
+//                        y = myRandom.makeRandom(1, 0.9f, 2);
+//                    }
+//                }
+//            }
 
             //sine
 //
-//            x = random.nextDouble();
-//            y = Math.abs(Math.sin(Math.PI * y));
-//            System.out.println(y);
+            x = random.nextDouble();
+            y = Math.abs(Math.sin(Math.PI * y));
+            System.out.println(y);
 
             //logistc
 

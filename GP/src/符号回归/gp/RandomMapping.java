@@ -1,6 +1,7 @@
 package src.符号回归.gp;
 
 import javax.script.ScriptException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,7 +21,7 @@ public class RandomMapping extends BaseGenetic_多维数据集 {
         return mappingList;
     }
 
-    public static void main(String[] args) throws ScriptException {
+    public static void main(String[] args) throws ScriptException, IOException, ClassNotFoundException {
         RandomMapping gp = new RandomMapping();
 
 

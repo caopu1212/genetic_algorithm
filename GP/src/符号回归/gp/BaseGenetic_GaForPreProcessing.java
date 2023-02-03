@@ -6,6 +6,7 @@ import src.符号回归.tools.MyRandom;
 import src.符号回归.tree.Node;
 import src.符号回归.tree.OperatorNode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -401,7 +402,7 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         BaseGenetic_GaForPreProcessing gp = new BaseGenetic_GaForPreProcessing();
 
 //        LogisticMapping gp = new LogisticMapping();

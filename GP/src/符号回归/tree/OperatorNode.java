@@ -1,5 +1,11 @@
 package src.符号回归.tree;
 
+
+//import src.符号回归.Elements.DrawTree;
+import src.符号回归.Elements.DrawTree;
+import src.符号回归.tree.Node.*;
+import src.符号回归.tools.PrintTree;
+
 public interface OperatorNode {
   public Double operate();
   public boolean isTerminal();
@@ -19,6 +25,7 @@ public interface OperatorNode {
   public double getNormalizedFitness();
   public int getMark();
   public void setMark(int mark);
+  public void drowTree(Node root, DrawTree.Trunk prev, boolean isLeft);
 
 
 

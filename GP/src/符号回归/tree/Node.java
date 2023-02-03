@@ -5,6 +5,9 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import src.符号回归.Elements.DrawTree;
+import src.符号回归.tools.PrintTree;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,6 +120,22 @@ public abstract class Node implements OperatorNode {
     //计算子节点数量
     public int countSubnodes(OperatorNode root) {
         int nodes = 0;
+//        if (root.isTerminal())
+        if (root == null)
+            return 0;
+        if (root.getRight() == null) {
+            // 单参数运算符的情况
+            nodes = 1 + countSubnodes(root.getLeft());
+        } else {
+            nodes = 1 + countSubnodes(root.getLeft()) + countSubnodes(root.getRight());
+        }
+        return nodes;
+    }
+
+
+    //计算子节点数量
+    public int pickNode(OperatorNode root, double target) {
+        int nodes = 0;
         if (root.isTerminal())
             return 0;
         if (root.getRight() == null) {
@@ -125,9 +144,10 @@ public abstract class Node implements OperatorNode {
         } else {
             nodes = 1 + countSubnodes(root.getLeft()) + countSubnodes(root.getRight());
         }
-
         return nodes;
     }
+
+
 
 
     public void setFitness(Double fitness) {
@@ -146,4 +166,14 @@ public abstract class Node implements OperatorNode {
         return normalizedFitness;
     }
 
+
+    public void drowTree(Node root, DrawTree.Trunk prev, boolean isLeft){
+
+    }
+
+
+
+
 }
+
+

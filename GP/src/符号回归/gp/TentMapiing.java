@@ -1,6 +1,7 @@
 package src.符号回归.gp;
 
 import javax.script.ScriptException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,7 +26,7 @@ public class TentMapiing extends BaseGenetic_多维数据集 {
         return mappingList;
     }
 
-    public static void main(String[] args) throws ScriptException {
+    public static void main(String[] args) throws ScriptException, IOException, ClassNotFoundException {
         TentMapiing gp = new TentMapiing();
 
         int[] example = {0, 0, 4};

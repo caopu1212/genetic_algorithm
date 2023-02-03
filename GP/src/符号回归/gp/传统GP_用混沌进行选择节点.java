@@ -1,24 +1,17 @@
 package src.符号回归.gp;
 
 import lombok.SneakyThrows;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.RefineryUtilities;
-import src.符号回归.tools.LineChart;
 import src.符号回归.tree.Node;
 import src.符号回归.tree.OperatorNode;
 
 import javax.script.ScriptException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
-public class 传统GP_demo extends BaseGenetic_多维数据集 {
+public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数据集 {
 
 
     @Override
@@ -61,52 +54,137 @@ public class 传统GP_demo extends BaseGenetic_多维数据集 {
         return population;
     }
 
+
     @Override
-    public OperatorNode crossOver(OperatorNode dad, OperatorNode mom, int mutationRate) {
+    public OperatorNode crossOver(OperatorNode dad, OperatorNode mom, int mutationRate) throws IOException, ClassNotFoundException {
+        //计算变异概率
         int mutation = random.nextInt(100), decision = random.nextInt(2);
+        //取一个随机数用这个数 用混沌映射 去map的前两位作为父母的位置
+        double[] chaosList = new double[2];
+        double x = random.nextDouble();
+//        for (int i = 0; i < 2; i++) {
+//            x = x * 4 * (1 - x);
+//            chaosList[i] = x;
+//        }
+
+
+        //sin映射
+//        for (int i = 0; i < 2; i++) {
+//            x = Math.abs(Math.sin(Math.PI * x));
+//            chaosList[i] = x;
+//        }
+//
+        //tent映射
+        for (int i = 0; i < 2; i++) {
+            if (x <= 0.5) {
+                x = 1.5 * x;
+            } else {
+                x = 1.5 * (1 - x);
+            }
+            chaosList[i] = x;
+        }
+
+
+
+//        chaosList[0] =random.nextDouble();
+//        chaosList[1] =random.nextDouble();
+
         OperatorNode cloneDad = dad.cloneTree(), cloneMom = mom.cloneTree();
-        OperatorNode dadStopPoint = pickStop(cloneDad), momStopPoint = pickStop(cloneMom);
+
+//        int i = cloneDad.countSubnodes(cloneDad);
+//        int qwe = cloneMom.countSubnodes(cloneDad);
+
+
+        long targetDad = Math.round(chaosList[0] * cloneDad.countSubnodes(cloneDad));
+        long targetMom = Math.round(chaosList[1] * cloneMom.countSubnodes(cloneMom));
+
+        if (targetDad == 0)
+            targetDad++;
+        if (targetMom == 0)
+            targetMom++;
+
+        count = 0;
+        OperatorNode dadStopPoint = pickStop(cloneDad, (int) targetDad);
+//        OperatorNode dadStopPoint = pickStop(cloneDad);
+        //全局变量清零
+        count = 0;
+        OperatorNode momStopPoint = pickStop(cloneMom, (int) targetMom);
+//        OperatorNode momStopPoint = pickStop(cloneMom);
 
         if (mutation > mutationRate) {
+
+//            dadStopPoint.setLeft(momStopPoint);
+//            dadStopPoint.setRight(momStopPoint);
+//            dadStopPoint.setRight(momStopPoint.getRight());
+
             if (decision == 0) {
+
                 dadStopPoint.setLeft(momStopPoint);
             } else {
                 dadStopPoint.setRight(momStopPoint);
             }
         } else {
             if (decision == 0) {
-                dadStopPoint.setLeft(generateTree(1, null));
+            dadStopPoint.setLeft(generateTree(1, null));
             } else {
-                dadStopPoint.setRight(generateTree(1, null));
+            dadStopPoint.setRight(generateTree(1, null));
             }
         }
         return cloneDad;
     }
 
 
+    public static Object deepClone(Object object) throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(object);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        return ois.readObject();
+    }
+
+
+    public ArrayList chaosMapping(int amountOfChaosMapping) {
+        double μ = 4;
+        ArrayList mappingList = new ArrayList();
+        for (int j = 0; j < amountOfChaosMapping; j++) {
+            ArrayList subList = new ArrayList();
+            Random random = new Random();
+            double x = random.nextDouble();
+            for (int i = 0; i < 100; i++) {
+                x = x * μ * (1 - x);
+                subList.add(x);
+            }
+            mappingList.add(subList);
+        }
+        return mappingList;
+    }
+
+
     @SneakyThrows
     public static void main(String[] args) throws ScriptException, IOException {
+        //  画折线图
+//        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+//        line_chart_dataset.addValue( 15 , "schools" , "1970" );
+//        line_chart_dataset.addValue( 30 , "schools" , "1980" );
+//        line_chart_dataset.addValue( 60 , "schools" , "1990" );
+//        line_chart_dataset.addValue( 120 , "schools" , "2000" );
+//        line_chart_dataset.addValue( 240 , "schools" , "2010" );
+//        line_chart_dataset.addValue( 300 , "schools" , "2014" );
+//
+//        JFreeChart lineChartObject = ChartFactory.createLineChart(
+//                "Schools Vs Years","Year",
+//                "Schools Count",
+//                line_chart_dataset, PlotOrientation.VERTICAL,
+//                true,true,false);
+//
+//        int width = 640; /* Width of the image */
+//        int height = 480; /* Height of the image */
+//        File lineChart = new File( "LineChartLineChartLineChartLineChartLineChartLineChart.jpeg" );
+//        ChartUtilities.saveChartAsJPEG(lineChart ,lineChartObject, width ,height);
 
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-        line_chart_dataset.addValue( 15 , "schools" , "1970" );
-        line_chart_dataset.addValue( 30 , "schools" , "1980" );
-        line_chart_dataset.addValue( 60 , "schools" , "1990" );
-        line_chart_dataset.addValue( 120 , "schools" , "2000" );
-        line_chart_dataset.addValue( 240 , "schools" , "2010" );
-        line_chart_dataset.addValue( 300 , "schools" , "2014" );
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Schools Vs Years","Year",
-                "Schools Count",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true,true,false);
-
-        int width = 640; /* Width of the image */
-        int height = 480; /* Height of the image */
-        File lineChart = new File( "LineChartLineChartLineChartLineChartLineChartLineChart.jpeg" );
-        ChartUtilities.saveChartAsJPEG(lineChart ,lineChartObject, width ,height);
-
-        传统GP_demo gp = new 传统GP_demo();
+        传统GP_用混沌进行选择节点 gp = new 传统GP_用混沌进行选择节点();
 
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x
@@ -140,12 +218,12 @@ public class 传统GP_demo extends BaseGenetic_多维数据集 {
         ArrayList<Integer> generationList = new ArrayList();
         ArrayList<Double> RSquareList = new ArrayList();
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 30; i++) {
             gp.inputValue.clear();
             gp.initializeSolution();
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(100, 6, null, 60, 100);
+            gp.geneticAlgorithm(200, 3, null, 5 , 100);
 
             long stopTime = System.currentTimeMillis();
 
@@ -194,3 +272,6 @@ public class 传统GP_demo extends BaseGenetic_多维数据集 {
         System.out.println("r^2 均值 =  " + RSquareList.stream().mapToDouble(a -> a).sum() / RSquareList.size());
     }
 }
+
+
+// TODO: 2023/2/1  通过混沌映射找到对应的node

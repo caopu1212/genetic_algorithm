@@ -1,13 +1,25 @@
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import lombok.Data;
 import lombok.ToString;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
 import org.junit.Test;
+import src.符号回归.tools.LineChart;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Random;
 
-public class test {
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+public class test  {
     public static Random random = new Random();
 
     public static void main(String[] args) {
@@ -74,6 +86,42 @@ public class test {
         System.out.println(Math.log(Math.tan(Math.exp(121.))));
 
     }
+
+
+
+
+    @Test
+    public void createPhoneNumber() throws IOException {
+
+
+        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+        line_chart_dataset.addValue( 15 , "schools" , "1970" );
+        line_chart_dataset.addValue( 30 , "schools" , "1980" );
+        line_chart_dataset.addValue( 60 , "schools" , "1990" );
+        line_chart_dataset.addValue( 120 , "schools" , "2000" );
+        line_chart_dataset.addValue( 240 , "schools" , "2010" );
+        line_chart_dataset.addValue( 300 , "schools" , "2014" );
+
+        JFreeChart lineChartObject = ChartFactory.createLineChart(
+                "Schools Vs Years","Year",
+                "Schools Count",
+                line_chart_dataset,PlotOrientation.VERTICAL,
+                true,true,false);
+
+        int width = 640; /* Width of the image */
+        int height = 480; /* Height of the image */
+        File lineChart = new File( "LineChart.jpeg" );
+        ChartUtilities.saveChartAsJPEG(lineChart ,lineChartObject, width ,height);
+//更多请阅读：https://www.yiibai.com/jfreechart/jfreechart_line_chart.html
+
+
+
+        System.out.println("123");
+
+
+    }
+
+
 
     @Data
     @ToString

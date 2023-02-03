@@ -6,6 +6,7 @@ import src.符号回归.tree.Node;
 import src.符号回归.tree.OperatorNode;
 import src.符号回归.tree.TerminalX0;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
@@ -32,6 +33,10 @@ public class BaseGenetic_多维数据集 {
     public static List<Class<? extends Node>> nodeClassList = Node.getNodeClassList();
 
     public static int totalFitnessCalculatedTimes = 0;
+
+    public static ArrayList<Double> dataRecord = new ArrayList<>();
+
+    public static int count = 0;
 
 
     public BaseGenetic_多维数据集() {
@@ -96,7 +101,7 @@ public class BaseGenetic_多维数据集 {
         count = 0.0;
         //对不同的映射进行amountOfTree次树生成，看平均值
         for (Object probabilityList_ : chaoticList) {
-//            System.out.println("part2 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
+            System.out.println("part2 训练进度：" + count++ / amountOfChaosMapping * 100 + "%");
 
 
             ArrayList<OperatorNode> chaoticPopulationList = new ArrayList();
@@ -406,12 +411,20 @@ public class BaseGenetic_多维数据集 {
         return evaluation;
     }
 
+    /**
+     * 随机算一个node(不是纯随机选择, 尽可能选择靠后的node)
+     *
+     * @param root
+     * @return
+     */
+    //选择节点进行遗传操作
     public OperatorNode pickStop(OperatorNode root) {
         if (root.isTerminal()) {
             return root;
         }
         int i = root.countSubnodes(root);
         int decision = random.nextInt(i);
+
         if (root.getRight() == null) {
             if (decision == 0) {
                 return root;
@@ -430,7 +443,35 @@ public class BaseGenetic_多维数据集 {
         return null;
     }
 
-    public OperatorNode crossOver(OperatorNode dad, OperatorNode mom, int mutationRate) {
+
+    /**
+     * 取到目标位置的node
+     *
+     * @param root        根节点
+     * @param targetNode  目标节点的位置(四舍五入进来的)
+     * @return 选择的node
+     */
+    public OperatorNode pickStop(OperatorNode root, int targetNode) {
+        count++;
+        if (count == targetNode) {
+            return root;
+        }
+
+        OperatorNode result = null;
+
+        if (root.getLeft() != null)
+            result = pickStop(root.getLeft(), targetNode);
+        //如果不为空说明在左边找到了
+        if (result != null)
+            return result;
+        if (root.getRight() != null)
+            result = pickStop(root.getRight(), targetNode);
+
+        return result;
+    }
+
+
+    public OperatorNode crossOver(OperatorNode dad, OperatorNode mom, int mutationRate) throws IOException, ClassNotFoundException {
         int mutation = random.nextInt(100), decision = random.nextInt(2);
         OperatorNode cloneDad = dad.cloneTree(), cloneMom = mom.cloneTree();
         OperatorNode dadStopPoint = pickStop(cloneDad), momStopPoint = pickStop(cloneMom);
@@ -533,6 +574,19 @@ public class BaseGenetic_多维数据集 {
      */
     public void initializeSolution() {
         inputValue = new FileOperator().readFile();
+
+        //使用pca降维
+//        PCA pca = new PCA();
+//        double[][] doubles = pca.pcaStart();
+//        for (int i = 0; i < inputValue.size(); i++) {
+//            ArrayList arrayList = new ArrayList();
+//            for (double v : doubles[i]) {
+//                arrayList.add(v);
+//            }
+//            inputValue.get(i).setFeatures(arrayList);
+//        }
+
+
     }
 
 
@@ -564,7 +618,7 @@ public class BaseGenetic_多维数据集 {
         }
     }
 
-    public OperatorNode[] reproduction(OperatorNode[] population, int size, int mutationRate) {
+    public OperatorNode[] reproduction(OperatorNode[] population, int size, int mutationRate) throws IOException, ClassNotFoundException {
         OperatorNode[] breed = new OperatorNode[size];
         int filled = 0;
 
@@ -581,8 +635,9 @@ public class BaseGenetic_多维数据集 {
         return breed;
     }
 
-    public void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation, int mutationRate, int iteration) {
+    public void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation, int mutationRate, int iteration) throws IOException, ClassNotFoundException {
 
+//        dataRecord.add(calculateRSquare(min));
 
         if (totalGenerations % 50 == 0) {
             System.out.println("At " + totalGenerations + " gens");
@@ -594,32 +649,35 @@ public class BaseGenetic_多维数据集 {
         if (totalGenerations == iteration) {
             System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
             System.out.println("best case: " + bestIndividual.printContent());
+//            PrintTree.print(bestIndividual);
+
             System.out.println("fitness = " + bestIndividual.getFitness());
             System.out.println("计算fitness的次数 = " + totalFitnessCalculatedTimes);
 //            System.out.println(initialPopulation[0].printContent());
 
-            for (FileData fileData : inputValue) {
-                //将树的变量替换为目标输入
-                parse(bestIndividual, fileData.getFeatures());
-                System.out.println("预测值: " + bestIndividual.operate() + " label: " + fileData.getIndependentVariable());
 
-            }
+//            inputValue = new FileOperator().readTestFile();
+//            for (FileData fileData : inputValue) {
+//                //将树的变量替换为目标输入
+//                parse(bestIndividual, fileData.getFeatures());
+//                System.out.println("预测值: " + bestIndividual.operate() + " label: " + fileData.getIndependentVariable());
+//            }
             return;
         }
-
         OperatorNode[] population;
         if (initialPopulation == null) population = initiatePopulation(size, depth);
         else population = initialPopulation;
 
         if (evaluateFitness(population)) {
+
             return;
         } else {
             OperatorNode[] breed = reproduction(population, size, mutationRate);
             ++this.totalGenerations;
             geneticAlgorithm(size, depth, breed, mutationRate, iteration);
         }
-    }
 
+    }
 
     public double calculateRSquare(double res) {
 //        R^2 = 1- ( fitness(res)/ ∑ (原值 - 原值的平均值)^2)  ?
@@ -643,6 +701,12 @@ public class BaseGenetic_多维数据集 {
         return this.totalGenerations;
     }
 
+    //每一轮的数据
+    public ArrayList<Double> getDataRecord() {
+        return this.dataRecord;
+    }
+
+
     public double calculateAdjustedRSquare(double rSquare) {
         int n = inputValue.size();// 样本个数
         int p = inputValue.get(0).getFeatures().size(); // 变量个数
@@ -652,9 +716,46 @@ public class BaseGenetic_多维数据集 {
     public double getRSquare() {
         return calculateRSquare(this.min);
     }
+
     public double getAdjustedRSquare(double rSquare) {
         return calculateAdjustedRSquare(rSquare);
     }
+
+
+    public double test(OperatorNode[] population) {
+
+        inputValue = new FileOperator().readTestFile();
+//            for (FileData fileData : inputValue) {
+//                //将树的变量替换为目标输入
+//                parse(bestIndividual, fileData.getFeatures());
+//                System.out.println("预测值: " + bestIndividual.operate() + " label: " + fileData.getIndependentVariable());
+//            }
+
+
+        for (int i = 0; i < population.length; i++) {
+            OperatorNode clone = population[i].cloneTree();
+            Double result = evaluate(clone);
+            if (result == 0) {
+
+                System.out.println("find best case(in reverse order): " + bestIndividual.printContent());
+                System.out.println("r^2 = " + calculateRSquare(min));
+            }
+
+            population[i].setFitness(Math.abs(result));
+            if (result < min) {
+                min = result;
+                System.out.println("更新最优: " + min);
+                bestIndividual = population[i];
+//                System.out.println(population[i].operate());
+//                System.out.println(population[i].printContent());
+//                System.out.println("r^2 = " + calculateRSquare(min));
+                System.out.println(totalGenerations + " 代");
+            }
+
+        }
+        return calculateRSquare(min);
+    }
+
 
 /**
  * test
@@ -674,5 +775,10 @@ public class BaseGenetic_多维数据集 {
     // TODO: 2022/5/29  随想: 用神经网络训练一个能够封分辨当前概率mapping是否容易产生过长数据的模型.  通过判断是否容易生成过长数据, 在预学习时候在fitness给上相应权重.
 
     //  TODO: 2022/7/17 为树加一个方法: 求当前所有子节点的数量   done
+
+    // TODO: 2023/1/27  树的可视化 
+    // TODO: 2023/1/27  部署到服务器
+
+    // TODO: 2023/1/29  添加PCA降维  done
 }
 
