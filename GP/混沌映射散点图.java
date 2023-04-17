@@ -4,8 +4,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import src.符号回归.tools.FileOperator;
-import src.符号回归.tools.MyRandom;
+import src.SymbolicRegression.tools.FileOperator;
+import src.SymbolicRegression.tools.MyRandom;
 
 import javax.swing.*;
 import java.util.Random;
