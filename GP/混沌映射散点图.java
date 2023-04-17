@@ -25,31 +25,31 @@ public class 混沌映射散点图 {
 
         double x;
         double y = random.nextDouble();
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 6000; i++) {
 
 
             // pseudo random
-//            x = random.nextDouble();
-//            y = random.nextDouble();
-//            if (y > 0.1 && y < 0.9) {
-//                count++;
-//                int temp = random.nextInt(4);
-//                if (temp == 0) {
-//                    count1++;
-//                    temp = random.nextInt(2);
-//                    if (temp == 0) {
-//                        y = myRandom.makeRandom(0.1f, 0, 2);
-//                    } else if(temp == 1){
-//                        y = myRandom.makeRandom(1, 0.9f, 2);
-//                    }
-//                }
-//            }
+            x = random.nextDouble();
+            y = random.nextDouble();
+            if (y > 0.1 && y < 0.9) {
+                count++;
+                int temp = random.nextInt(4);
+                if (temp == 0) {
+                    count1++;
+                    temp = random.nextInt(2);
+                    if (temp == 0) {
+                        y = myRandom.makeRandom(0.1f, 0, 2);
+                    } else if(temp == 1){
+                        y = myRandom.makeRandom(1, 0.9f, 2);
+                    }
+                }
+            }
 
             //sine
 //
-            x = random.nextDouble();
-            y = Math.abs(Math.sin(Math.PI * y));
-            System.out.println(y);
+//            x = random.nextDouble();
+//            y = Math.abs(Math.sin(Math.PI * y));
+//            System.out.println(y);
 
             //logistc
 
@@ -60,11 +60,11 @@ public class 混沌映射散点图 {
 
             //tent
 //            x = random.nextDouble();
-//
+//            y = random.nextDouble();
 //            if (y <= 0.5) {
-//                y = 1.5 * y;
+//                y = 2 * y;
 //            } else {
-//                y = 1.5 * (1 - y);
+//                y = 2 * (1 - y);
 //            }
 
             series.add(x, y);

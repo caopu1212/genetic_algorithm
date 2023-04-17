@@ -50,9 +50,9 @@ public class LogisticMapping extends BaseGenetic_多维数据集 {
             long startTime = System.currentTimeMillis();
 
 //            long startTime = System.currentTimeMillis();
-            gp.evaluateChaoticFactors(10000, 1, 5, 7);
+            gp.evaluateChaoticFactors(50000, 1, 5, 7);
             try {
-                gp.geneticAlgorithm(100, 3, null, 60,100);
+                gp.geneticAlgorithm(200, 3, null, 60,100);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {

@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import static src.符号回归.gp.BaseGenetic_GaForPreProcessing.myRandom;
+
 public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数据集 {
 
 
@@ -62,6 +64,8 @@ public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数�
         //取一个随机数用这个数 用混沌映射 去map的前两位作为父母的位置
         double[] chaosList = new double[2];
         double x = random.nextDouble();
+
+        //logistic映射
 //        for (int i = 0; i < 2; i++) {
 //            x = x * 4 * (1 - x);
 //            chaosList[i] = x;
@@ -75,19 +79,40 @@ public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数�
 //        }
 //
         //tent映射
+//        for (int i = 0; i < 2; i++) {
+//            if (x <= 0.5) {
+//                x = 1.5 * x;
+//            } else {
+//                x = 1.5 * (1 - x);
+//            }
+//            chaosList[i] = x;
+//        }
+
+
+        //随机选择
+//        chaosList[0] =random.nextDouble();
+//        chaosList[1] =random.nextDouble();
+
+
+
+        //伪随机,分布类似logistic
         for (int i = 0; i < 2; i++) {
-            if (x <= 0.5) {
-                x = 1.5 * x;
-            } else {
-                x = 1.5 * (1 - x);
+            x = random.nextDouble();
+            if (x > 0.1 && x < 0.9) {
+                int temp = random.nextInt(4);
+                if (temp == 0) {
+                    temp = random.nextInt(2);
+                    if (temp == 0) {
+                        x = myRandom.makeRandom(0.1f, 0, 2);
+                    } else if (temp == 1) {
+                        x = myRandom.makeRandom(1, 0.9f, 2);
+                    }
+                }
             }
             chaosList[i] = x;
         }
 
 
-
-//        chaosList[0] =random.nextDouble();
-//        chaosList[1] =random.nextDouble();
 
         OperatorNode cloneDad = dad.cloneTree(), cloneMom = mom.cloneTree();
 
@@ -218,12 +243,12 @@ public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数�
         ArrayList<Integer> generationList = new ArrayList();
         ArrayList<Double> RSquareList = new ArrayList();
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             gp.inputValue.clear();
             gp.initializeSolution();
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, null, 5 , 100);
+            gp.geneticAlgorithm(100, 3, null, 5 , 100);
 
             long stopTime = System.currentTimeMillis();
 
@@ -274,4 +299,4 @@ public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数�
 }
 
 
-// TODO: 2023/2/1  通过混沌映射找到对应的node
+// TODO: 2023/2/1  通过混沌映射找到对应的node   done
