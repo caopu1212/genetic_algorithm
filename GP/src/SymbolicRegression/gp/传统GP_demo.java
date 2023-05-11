@@ -143,7 +143,7 @@ public class 传统GP_demo extends BaseGenetic_多维数据集 {
             gp.initializeSolution();
 
             long startTime = System.currentTimeMillis();
-            gp.geneticAlgorithm(200, 3, null, 60, 100);
+            gp.geneticAlgorithm(100, 3, null, 60, 100);
 
             long stopTime = System.currentTimeMillis();
 

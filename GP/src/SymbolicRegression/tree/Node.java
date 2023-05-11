@@ -30,7 +30,7 @@ public abstract class Node implements OperatorNode {
                                 new TypeAnnotationsScanner(),
                                 new SubTypesScanner(false)
                         )
-                        .setUrls(ClasspathHelper.forPackage("src.符号回归.tree")));
+                        .setUrls(ClasspathHelper.forPackage("src.SymbolicRegression.tree")));
         Set<Class<?>> types = f.getTypesAnnotatedWith(NodeImpl.class);
         List<Class<? extends Node>> result = new ArrayList<>();
         for (int i = 0; i < types.size(); i++) {
