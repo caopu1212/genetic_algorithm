@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class TentMapiing extends BaseGenetic_多维数据集 {
+public class TentMapiing extends BaseGenetic_MutiDimensionData {
     @Override
     public ArrayList chaosMapping(int amountOfChaosMapping) {
         ArrayList mappingList = new ArrayList();

@@ -13,7 +13,7 @@ import java.util.Random;
 
 import static src.SymbolicRegression.gp.BaseGenetic_GaForPreProcessing.myRandom;
 
-public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数据集 {
+public class ConventionalGP_ChaoticPickingNode extends BaseGenetic_MutiDimensionData {
 
 
     @Override
@@ -209,7 +209,7 @@ public class 传统GP_用混沌进行选择节点 extends BaseGenetic_多维数�
 //        File lineChart = new File( "LineChartLineChartLineChartLineChartLineChartLineChart.jpeg" );
 //        ChartUtilities.saveChartAsJPEG(lineChart ,lineChartObject, width ,height);
 
-        传统GP_用混沌进行选择节点 gp = new 传统GP_用混沌进行选择节点();
+        ConventionalGP_ChaoticPickingNode gp = new ConventionalGP_ChaoticPickingNode();
 
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x*x*x*x*x";//x^15
 //        String formula = "x*x*x*x*x*x*x*x*x*x*x+x*x*x*x*x*x*x+x*x*x*x*x*x+x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^yacht-train-0+x^7+x^6+x^5+x^4 + x^3 + x^2 + x

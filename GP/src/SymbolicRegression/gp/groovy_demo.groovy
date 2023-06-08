@@ -3,7 +3,7 @@ package src.SymbolicRegression.gp
 
 import javax.script.ScriptException
 
-public class groovy_demo extends BaseGenetic_多维数据集 {
+public class groovy_demo extends BaseGenetic_MutiDimensionData {
 
     static groovy_demo gp = new groovy_demo()
     public static void main(String[] args) throws ScriptException {

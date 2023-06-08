@@ -4,7 +4,7 @@ import javax.script.ScriptException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class LogisticMapping extends BaseGenetic_多维数据集 {
+public class LogisticMapping extends BaseGenetic_MutiDimensionData {
     public static void main(String[] args) throws ScriptException {
         LogisticMapping gp = new LogisticMapping();
         String formula = "10000*x";

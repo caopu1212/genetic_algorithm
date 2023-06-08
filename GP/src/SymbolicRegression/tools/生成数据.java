@@ -26,7 +26,7 @@ public class 生成数据 {
 
 
     public static void main(String[] args) {
-//        File writename = new File("src\\通过输入输出求公式\\data\\BaseGenetic_多维数据集");
+//        File writename = new File("src\\通过输入输出求公式\\data\\BaseGenetic_MutiDimensionData");
         try {
 
             File file = new File(生成数据.class.getResource("/test.txt").getFile());

@@ -18,7 +18,7 @@ import java.util.*;
  * 变量：x
  */
 
-public class BaseGenetic_多维数据集 {
+public class BaseGenetic_MutiDimensionData {
     public static int totalGenerations = 1;
     public Random random = new Random();
     public static ArrayList<ArrayList<Double>> betterChaoticMapping = new ArrayList<>();
@@ -39,7 +39,7 @@ public class BaseGenetic_多维数据集 {
     public static int count = 0;
 
 
-    public BaseGenetic_多维数据集() {
+    public BaseGenetic_MutiDimensionData() {
         inputValue = new FileOperator().readFile();
     }
 
@@ -95,7 +95,7 @@ public class BaseGenetic_多维数据集 {
             weightForOperatorList.add(probabilityList);
         }
 
-        BaseGenetic_多维数据集 chaotic = new BaseGenetic_多维数据集();
+        BaseGenetic_MutiDimensionData chaotic = new BaseGenetic_MutiDimensionData();
         ArrayList chaoticList = weightForOperatorList;
         HashMap<ArrayList, ArrayList> chaoticMap = new HashMap<>();
         count = 0.0;
@@ -412,7 +412,7 @@ public class BaseGenetic_多维数据集 {
     }
 
     /**
-     * 随机算一个node(不是纯随机选择, 尽可能选择靠后的node)
+     * 随机选一个node(不是纯随机选择, 尽可能选择靠后的node)
      *
      * @param root
      * @return
@@ -500,7 +500,7 @@ public class BaseGenetic_多维数据集 {
         OperatorNode[] population = new Node[size];
 
         for (int i = 0; i < size; i++) {
-            population[i] = generateTree(depth, BaseGenetic_多维数据集.betterChaoticMapping.get(random.nextInt(BaseGenetic_多维数据集.betterChaoticMapping.size())));
+            population[i] = generateTree(depth, BaseGenetic_MutiDimensionData.betterChaoticMapping.get(random.nextInt(BaseGenetic_MutiDimensionData.betterChaoticMapping.size())));
 //            System.out.println("new population: " + population[i].printContent());
         }
 

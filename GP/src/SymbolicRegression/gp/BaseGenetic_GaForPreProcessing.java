@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 {
+public class BaseGenetic_GaForPreProcessing extends BaseGenetic_MutiDimensionData {
     public static MyRandom myRandom = new MyRandom();
 
     public static PreProcessing bestPreProcessing = new PreProcessing();
@@ -270,13 +270,13 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
         //若比当前最优要好,直接替换
         int size = amountOfBetterPreprocessing;
         if (betterPreprocessing.size() != size) {
-            BaseGenetic_多维数据集.betterChaoticMapping.add(targetPreprocessing.getMappingList());
+            BaseGenetic_MutiDimensionData.betterChaoticMapping.add(targetPreprocessing.getMappingList());
             betterPreprocessing.add(targetPreprocessing);
         } else {
             for (int i = 0; i < betterPreprocessing.size(); i++) {
                 if (betterPreprocessing.get(i).getFitness() > targetPreprocessing.getFitness()) {
                     betterPreprocessing.set(i, targetPreprocessing);
-                    BaseGenetic_多维数据集.betterChaoticMapping.set(i, targetPreprocessing.getMappingList());
+                    BaseGenetic_MutiDimensionData.betterChaoticMapping.set(i, targetPreprocessing.getMappingList());
                     return true;
 //                    break;
                 }
@@ -435,13 +435,13 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
             for (int j = 0; j < 1; j++) {
 
                 gp.geneticAlgorithmForPreProcessing(300, 6, 10, 40, 1);
-                for ( ArrayList<Double> tempList :BaseGenetic_多维数据集.betterChaoticMapping) {
+                for ( ArrayList<Double> tempList : BaseGenetic_MutiDimensionData.betterChaoticMapping) {
                     tempBetterChaoticMapping.add(tempList); }
-                BaseGenetic_多维数据集.betterChaoticMapping = new ArrayList<>();
+                BaseGenetic_MutiDimensionData.betterChaoticMapping = new ArrayList<>();
                 betterPreprocessing = new ArrayList<>();
                 bestPreProcessing = new PreProcessing();
             }
-            BaseGenetic_多维数据集.betterChaoticMapping = tempBetterChaoticMapping;
+            BaseGenetic_MutiDimensionData.betterChaoticMapping = tempBetterChaoticMapping;
 
 //            long startTime = System.currentTimeMillis();
 
@@ -457,17 +457,17 @@ public class BaseGenetic_GaForPreProcessing extends BaseGenetic_多维数据集 
 
             //初始化
             gp.totalGenerations = 1;
-            BaseGenetic_多维数据集.totalGenerations = 1;
+            BaseGenetic_MutiDimensionData.totalGenerations = 1;
             BaseGenetic_GaForPreProcessing.betterChaoticMapping = new ArrayList<>();
-            BaseGenetic_多维数据集.betterChaoticMapping = new ArrayList<>();
+            BaseGenetic_MutiDimensionData.betterChaoticMapping = new ArrayList<>();
             betterPreprocessing = new ArrayList<>();
-            BaseGenetic_多维数据集.min = 1.7976931348623157E308;
+            BaseGenetic_MutiDimensionData.min = 1.7976931348623157E308;
             min = 1.7976931348623157E308;
-            BaseGenetic_多维数据集.bestIndividual = null;
+            BaseGenetic_MutiDimensionData.bestIndividual = null;
             bestIndividual = null;
             bestPreProcessing = new PreProcessing();
 
-            BaseGenetic_多维数据集.totalFitnessCalculatedTimes = 0;
+            BaseGenetic_MutiDimensionData.totalFitnessCalculatedTimes = 0;
 
 
             System.out.println("这是第" + i + "次迭代啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊");

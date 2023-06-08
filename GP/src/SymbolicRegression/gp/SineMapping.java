@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class SineMapping extends BaseGenetic_多维数据集 {
+public class SineMapping extends BaseGenetic_MutiDimensionData {
     @Override
     public ArrayList chaosMapping(int amountOfChaosMapping) {
         double μ = 4;

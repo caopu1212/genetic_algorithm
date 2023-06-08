@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class FakeRandomMapping extends BaseGenetic_多维数据集 {
+public class FakeRandomMapping extends BaseGenetic_MutiDimensionData {
 
     MyRandom myRandom = new MyRandom();
 

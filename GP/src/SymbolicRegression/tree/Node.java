@@ -7,7 +7,6 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import src.SymbolicRegression.Elements.DrawTree;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +19,17 @@ public abstract class Node implements OperatorNode {
     private Double fitness;
     private double normalizedFitness;
     private int mark;
+    private double amountOfSubnodes;
+    private double timeUsage;
+
+
+    public double getAmountOfSubnodes() { return amountOfSubnodes; }
+
+    public void setAmountOfSubnodes(double amountOfSubnodes) { this.amountOfSubnodes = amountOfSubnodes; }
+
+    public double getTimeUsage() { return timeUsage; }
+
+    public void setTimeUsage(double timeUsage) { this.timeUsage = timeUsage; }
 
 
     public static List<Class<? extends Node>> getNodeClassList() {
@@ -113,7 +123,8 @@ public abstract class Node implements OperatorNode {
         if (this.getRight() == null) {
             return this.getLeft().printContent() + ' ' + this.rep;
         }
-        return this.getLeft().printContent() + ' ' + this.getRight().printContent() + ' ' + this.rep;
+//        return this.getLeft().printContent() + ' ' + this.getRight().printContent() + ' ' + this.rep;
+        return this.getLeft().printContent() + ' '+this.rep +" "+ this.getRight().printContent()    ;
     }
 
     //计算子节点数量
@@ -147,8 +158,6 @@ public abstract class Node implements OperatorNode {
     }
 
 
-
-
     public void setFitness(Double fitness) {
         this.fitness = fitness;
     }
@@ -166,11 +175,9 @@ public abstract class Node implements OperatorNode {
     }
 
 
-    public void drowTree(Node root, DrawTree.Trunk prev, boolean isLeft){
+    public void drowTree(Node root, DrawTree.Trunk prev, boolean isLeft) {
 
     }
-
-
 
 
 }

@@ -24,7 +24,10 @@ public interface OperatorNode {
   public int getMark();
   public void setMark(int mark);
   public void drowTree(Node root, DrawTree.Trunk prev, boolean isLeft);
-
+  public double getAmountOfSubnodes();
+  public void setAmountOfSubnodes(double amountOfSubnodes) ;
+  public double getTimeUsage() ;
+  public void setTimeUsage(double timeUsage) ;
 
 
 }

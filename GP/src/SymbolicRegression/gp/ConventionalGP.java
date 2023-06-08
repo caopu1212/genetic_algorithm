@@ -11,13 +11,11 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
+public class ConventionalGP extends BaseGenetic_MutiDimensionData {
 
 
     @Override
     public OperatorNode generateTree(int depth, ArrayList probabilityList) {
-
-
         int value = random.nextInt(nodeClassList.size());
         ArrayList<Double> empty = new ArrayList<>();
         Constructor con = nodeClassList.get(value).getDeclaredConstructors()[0];
@@ -77,13 +75,12 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
         }
         return cloneDad;
     }
-
-    //
     @Override
     public boolean evaluateFitness(OperatorNode[] population) {
         boolean sequenceFound = false;
         for (int i = 0; i < population.length; i++) {
-            OperatorNode clone = population[i].cloneTree();
+//            OperatorNode clone = population[i].cloneTree();
+            OperatorNode clone = population[i];
             Double result = evaluate(clone);
             if (result == 0) {
                 sequenceFound = true;
@@ -101,7 +98,6 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
         return sequenceFound;
     }
 
-
     @Override
     public Double evaluate(OperatorNode clone) {
         Double evaluation = 0.0;
@@ -116,12 +112,12 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
 
             // 记录时间作为一个目标
             long startTime = System.nanoTime();
-
             Double reuslt = clone.operate();
             long endTime = System.nanoTime();
-
             long runingTime = endTime - startTime;
 
+            //保存计算所用时间
+            clone.setTimeUsage(runingTime);
             timeAll = timeAll + runingTime;
 
 //            最小二乘
@@ -130,105 +126,25 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
             evaluation = evaluation + answer;
         }
 
+        //保存节点数
+        int amountOfSubnodes =  clone.countSubnodes(clone);
+        clone.setAmountOfSubnodes(amountOfSubnodes);
 
 
-        //三个目标分别是性能, 节点数 , 运行时间
-        double[] values = {evaluation, (double) clone.countSubnodes(clone), timeAll};
-
-        //赋予权重
-        double[] weights = {0.8, 0.1, 0.1};
-
-        double weightedValue = linearWeighting(values, weights);
-//        System.out.println("Weighted value = " + weightedValue);
-//
         totalFitnessCalculatedTimes += 1;
 
-        return weightedValue;
-    }
-    public static double linearWeighting(double[] values, double[] weights) {
-        if (values.length != weights.length || values.length == 0) {
-            throw new IllegalArgumentException("Invalid arguments");
-        }
-
-        double weightedSum = 0;
-        double weightSum = 0;
-
-        for (int i = 0; i < values.length; i++) {
-            weightedSum += values[i] * weights[i];
-            weightSum += weights[i];
-        }
-
-        return weightedSum / weightSum;
-    }
-
-
-    public double getRSquare(OperatorNode node) {
-        return calculateRSquare(evaluateForRSquare(node));
-    }
-
-
-    public Double evaluateForRSquare(OperatorNode clone) {
-        Double evaluation = 0.0;
-        Double totalInput = Double.valueOf(inputValue.size());
-        for (FileData fileData : inputValue) {
-            //将树的变量替换为目标输入
-            parse(clone, fileData.getFeatures());
-            double answer = Math.pow(fileData.getIndependentVariable() - clone.operate(), 2);
-            evaluation = evaluation + answer;
-        }
         return evaluation;
     }
 
 
-    @Override
-    public void geneticAlgorithm(int size, int depth, OperatorNode[] initialPopulation, int mutationRate, int iteration) throws IOException, ClassNotFoundException {
-
-//        dataRecord.add(calculateRSquare(min));
-
-        if (totalGenerations % 50 == 0) {
-            System.out.println("At " + totalGenerations + " gens");
-            System.out.println("最优fitness = " + min);
-            System.out.println("r^2 = " + getRSquare(bestIndividual));
-            System.out.println(initialPopulation[0].printContent());
-        }
-
-        if (totalGenerations == iteration) {
-            System.out.println("Solution not found :" + totalGenerations + " 次以内没找到啊啊啊啊啊");
-            System.out.println("best case: " + bestIndividual.printContent());
-//            PrintTree.print(bestIndividual);
-
-            System.out.println("fitness = " + bestIndividual.getFitness());
-            System.out.println("计算fitness的次数 = " + totalFitnessCalculatedTimes);
-//            System.out.println(initialPopulation[0].printContent());
-
-
-//            inputValue = new FileOperator().readTestFile();
-//            for (FileData fileData : inputValue) {
-//                //将树的变量替换为目标输入
-//                parse(bestIndividual, fileData.getFeatures());
-//                System.out.println("预测值: " + bestIndividual.operate() + " label: " + fileData.getIndependentVariable());
-//            }
-            return;
-        }
-        OperatorNode[] population;
-        if (initialPopulation == null) population = initiatePopulation(size, depth);
-        else population = initialPopulation;
-
-        if (evaluateFitness(population)) {
-
-            return;
-        } else {
-            OperatorNode[] breed = reproduction(population, size, mutationRate);
-            ++this.totalGenerations;
-            geneticAlgorithm(size, depth, breed, mutationRate, iteration);
-        }
-
-    }
 
     @SneakyThrows
     public static void main(String[] args) throws ScriptException, IOException {
 
-        传统GP_多目标 gp = new 传统GP_多目标();
+
+        ConventionalGP gp = new ConventionalGP();
+
+        String formula = "x*x*x*x*x+x*x*x*x+x*x*x+x*x+x";//x^5+x^4 + x^3 + x^2 + x
 
         // 控制 目标公式，入参数量，参数区间
         gp.initializeSolution();
@@ -238,6 +154,7 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
         ArrayList<Long> timeList = new ArrayList();
         ArrayList<Integer> generationList = new ArrayList();
         ArrayList<Double> RSquareList = new ArrayList();
+        ArrayList<Double> subNodesList = new ArrayList<>();
 
         for (int i = 0; i < 1; i++) {
             gp.inputValue.clear();
@@ -250,12 +167,20 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
 
             System.out.println("Elapsed time is: " + (stopTime - startTime));
             System.out.println("Number of generations was: " + gp.getNumberOfGenerations());
-            System.out.println("r^2 =  " + gp.getRSquare(gp.bestIndividual));
-//            System.out.println("adjusted r^2 =  " + gp.getAdjustedRSquare(gp.getRSquare()));
+            System.out.println("r^2 =  " + gp.getRSquare());
+            System.out.println("adjusted r^2 =  " + gp.getAdjustedRSquare(gp.getRSquare()));
+
+
+            System.out.println("AmountOfSubnodes = " + gp.bestIndividual.getAmountOfSubnodes());
+            System.out.println("TimeUsage = " + gp.bestIndividual.getTimeUsage());
+
+
 
             timeList.add(stopTime - startTime);
             generationList.add(gp.getNumberOfGenerations());
-            RSquareList.add(gp.getRSquare(gp.bestIndividual));
+            RSquareList.add(gp.getRSquare());
+
+            subNodesList.add(gp.bestIndividual.getAmountOfSubnodes());
 
             ArrayList<Double> temp = gp.getDataRecord();
 
@@ -272,6 +197,7 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
         System.out.println("Time: " + timeList);
         System.out.println("Number of generations : " + generationList);
         System.out.println("r^2 =  " + RSquareList);
+        System.out.println("节点数 =  " + subNodesList);
 
 
         long totalStopTime = System.currentTimeMillis();
@@ -282,6 +208,9 @@ public class 传统GP_多目标 extends BaseGenetic_多维数据集 {
             total += time;
         }
         System.out.println("时间均值：" + total / timeList.size());
+
+        System.out.println("节点数均值：" + subNodesList.stream().mapToDouble(x->x).sum() / timeList.size());
+
 
         Long total1 = Long.valueOf(0);
         for (Integer generation : generationList) {

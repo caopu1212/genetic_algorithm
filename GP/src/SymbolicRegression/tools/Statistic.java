@@ -1,6 +1,6 @@
 package src.SymbolicRegression.tools;
 
-import src.SymbolicRegression.gp.BaseGenetic_多维数据集;
+import src.SymbolicRegression.gp.BaseGenetic_MutiDimensionData;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class Statistic {
 
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        BaseGenetic_多维数据集 gp = new BaseGenetic_多维数据集();
+        BaseGenetic_MutiDimensionData gp = new BaseGenetic_MutiDimensionData();
 
         gp.initializeSolution();
 
